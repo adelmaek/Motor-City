@@ -32,6 +32,12 @@ class AccountController extends Controller
         // Log::debug('account saved');
         return redirect()->back();
     }
-
+    public function postAddBrand(Request $request)
+    {
+        $brand = new Brand();
+        $brand->name = $request['nameInput'];
+        $brand->save();
+        return redirect()->back();
+    }
     
 }

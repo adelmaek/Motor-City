@@ -203,4 +203,49 @@ class Transaction extends Model
         // $transactionsRows = json_encode($transactionsRows);
         return $transactionsRows;
     }
+
+    // public static function getLatest100Transactions($brandId)
+    // {
+    //     $transactions = [];
+    //     $transactions = Transaction::where('brandId',$brandId)->orderBy('id', 'desc')->limit(100)->get();
+
+    // }
+    public static function updateCurrentBalanceOnDeletion($transactionDate, $accountId)
+    {
+        $account = Account::where('id', $accountId)->first();
+        $prevTransaction = Transaction::where('accountId', $accountId)->whereDate('date','<',$transactionDate)->orderBy('date','Desc')->first();
+        if(!empty($prevTransaction))
+            $prevTransaction = Transaction::where('accountId', $accountId)->whereDate('date','=',$prevTransaction->date)->orderBy('id','Desc')->first();
+
+        $followingTransactions = Transaction::where('accountId', $accountId)->whereDate('date','>=',$transactionDate)->orderBy('date','Asc')->get();
+        
+        if(!empty($prevTransaction))
+            $currentBalance = $prevTransaction->currentBalance;
+        else
+        {
+            $currentBalance =  $account->initialBalance;
+        }
+            
+        foreach($followingTransactions as  $trans)
+        {
+            if(!strcmp($trans->type,"add"))
+                $currentBalance = $currentBalance + $trans->value;
+            else
+                $currentBalance = $currentBalance - $trans->value;
+            
+            // Transaction::where('id', $trans->id)-> update(['currentCashNameTotal'=>$currentBalance]);
+            $trans->currentBalance = $currentBalance;
+            $trans->save();
+        }
+    }
+    public function deleteTransaction()
+    {
+        $transactionDate = $this->date;
+        $accountId = $this->accountId;
+
+        $deletionStatus = $this->delete();
+        if($deletionStatus)
+            Transaction::updateCurrentBalanceOnDeletion($transactionDate, $accountId);
+        return $deletionStatus;
+    }
 }

@@ -139,6 +139,46 @@
             </div>
         </div>
     </div>
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <div class="card border-dark">
+                <div class="card-header m-b-0 text-white bg-dark">Latest Transaction</div>
+                <div class="card-body" id="inputs">
+                    <h3 class="card-title">Latest User Transactions</h3>
+                    <table  id="transactionsTable" class="table color-bordered-table table-striped full-color-table full-info-table hover-table " style="width:100%">
+                        <thead style="width:100%">
+                            <tr>
+                                <th scope="col" style="text-align:center">Date</th>
+                                <th scope="col" style="text-align:center">Type</th>
+                                <th scope="col" style="text-align:center">Value</th>
+                                <th scope="col" style="text-align:center">Description</th>
+                                <th scope="col" style="text-align:center">Client</th>
+                                <th scope="col" style="text-align:center">Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach ($transactions as $trans)
+                            <tr>
+                                <td style="text-align:center">{{$trans->date}}</td>
+                                @if(!strcmp('add', $trans->type))
+                                    <td style="text-align:center">Deposition</td>
+                                @else
+                                    <td style="text-align:center">Withdrawal</td>
+                                @endif
+                                <td style="text-align:center">{{$trans->value}}</td> 
+                                <td style="text-align:center">{{$trans->description}}</td>
+                                <td style="text-align:center">{{$trans->clientName}}</td>
+                                <td style="text-align:center">
+                                    <a class="btn btn-danger delete-confirm" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('deleteTransaction',[$trans->id])}}" role="button">Delete</a>
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
 
@@ -175,4 +215,24 @@
         });
         $(' .buttons-print,.buttons-excel').addClass('btn btn-primary mr-1');
     </script>
+<script>
+    $('#transactionsTable').DataTable({
+        "displayLength": 5,
+        "processing": true,
+        dom: 'Bfrtip',
+        buttons: [
+                {
+                extend: 'excel',
+                title: 'Motor-City-Transactions',
+                footer: true
+            }
+        ]   ,
+        "scrollY":"390px",
+        "sScrollX": "100%",
+        responsive: true,
+        "scrollCollapse": true,
+        "paging":         false
+    });
+    $(' .buttons-print,.buttons-excel').addClass('btn btn-primary mr-1');
+</script>
 @endsection

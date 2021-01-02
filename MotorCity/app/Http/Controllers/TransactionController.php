@@ -9,6 +9,7 @@ use App\Models\Brand;
 use App\Models\Transaction;
 use App\Models\TransactionRow;
 use Log;
+use DB;
 class TransactionController extends Controller
 {
     public function postAddTransaction(Request $request)
@@ -39,24 +40,26 @@ class TransactionController extends Controller
 
         //now i have the account or created it. Just create the transaction and increment the account.
         $transaction = new Transaction();
-        if(!strcmp($balanceInput,"check"))
-            $transaction->init($account->id, Auth::user()->id, $request['typeInput'], $request['valueInput'], $request['dateInput'], $request['fromBankInput'], $request['toBankInput'], $request['noteInput'], $request['clientNameInput'], $brandId);
-        else
-            $transaction->init($account->id, Auth::user()->id, $request['typeInput'], $request['valueInput'], $request['dateInput'], null, null, $request['noteInput'], $request['clientNameInput'], $brandId);
-        
-        $transSaved = $transaction->save();
-        if($transSaved)
-        {
-            if(!strcmp($transaction->type,"add"))
-                $account->balance = $account->balance + $transaction->value;
+        DB::transaction(function () use($balanceInput, $transaction, $account, $request,$brandId){
+            if(!strcmp($balanceInput,"check"))
+                $transaction->init($account->id, Auth::user()->id, $request['typeInput'], $request['valueInput'], $request['dateInput'], $request['fromBankInput'], $request['toBankInput'], $request['noteInput'], $request['clientNameInput'], $brandId);
             else
-            $account->balance = $account->balance - $transaction->value;
-            $accountSaved = $account->save();
-            if(!$accountSaved)
-                App::abort(500, 'Error');
-        }
-        else
-                App::abort(500, 'Error');
+                $transaction->init($account->id, Auth::user()->id, $request['typeInput'], $request['valueInput'], $request['dateInput'], null, null, $request['noteInput'], $request['clientNameInput'], $brandId);
+        
+            $transSaved = $transaction->save();
+            if($transSaved)
+            {
+                if(!strcmp($transaction->type,"add"))
+                    $account->balance = $account->balance + $transaction->value;
+                else
+                    $account->balance = $account->balance - $transaction->value;
+                $accountSaved = $account->save();
+                if(!$accountSaved)
+                    App::abort(500, 'Error');
+            }
+            else
+                    App::abort(500, 'Error');
+        }, 5);
     
         return redirect()->back();
     }
@@ -148,4 +151,21 @@ class TransactionController extends Controller
         $transactions = Transaction::getTransactionOfAccount( $accountId, $fromDate, $toDate);
         return view('transactions/queryBankAccountTransactions',['accountId'=>$accountId,'transactions'=>$transactions]);
     }
+
+    public function getDeleteTransaction($transactionId)
+    {
+        $transaction = Transaction::where('id', $transactionId)->first();
+        $account = Account::where('id',$transaction->accountId)->first();
+        DB::transaction(function () use($transaction, $account){
+            $deletionStatus = $transaction->deleteTransaction();
+            if($deletionStatus)
+            {
+                $account->balance = $account->balance - $transaction->value;
+                $account->save();
+            }
+        }, 5);
+        return redirect()->back();
+    }
+
+
 }

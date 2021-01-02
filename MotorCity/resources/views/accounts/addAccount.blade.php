@@ -3,7 +3,7 @@
 @section('content')
 <div class="container-fluid">
     <div class="row justify-content-center">
-        <div class="col-md-12">
+        <div class="col-md-8">
             <div class="card border-dark">
                 <div class="card-header m-b-0 text-white bg-dark">Accounts</div>
                 <div class="card-body" id="inputs">
@@ -39,7 +39,7 @@
                                 <div class="form-group">
                                     <label for="nameInput">Account Name</label>
                                     <input type="text" class="form-control" id="nameInput" name="nameInput" placeholder="Balance Name or Number"  required>
-                                  </div>
+                                </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
@@ -64,6 +64,31 @@
                          <input type="submit" name="submit" class="btn btn-dark btn-md" value="Submit">
                         <input type="hidden" name="_token" value="{{Session::token()}}">
                       </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-dark">
+                <div class="card-header m-b-0 text-white bg-dark">Brands</div>
+                <div class="card-body" id="inputs">
+                    <h3 class="card-title">Add A Brand</h3>
+                    <br>
+                    <br>
+                    <form action="{{route('addBrand')}}" method="post">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="nameInput">Brand Name</label>
+                                    <br>
+                                    <br>
+                                    <input type="text" class="form-control" id="nameInput" name="nameInput" placeholder="Brand name"  required>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <input type="submit" name="submit" class="btn btn-dark btn-md" value="Submit">
+                        <input type="hidden" name="_token" value="{{Session::token()}}">
+                    </form>
                 </div>
             </div>
         </div>

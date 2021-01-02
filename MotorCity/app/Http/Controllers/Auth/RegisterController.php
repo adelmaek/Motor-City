@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-
+use App\Models\Brand;
 class RegisterController extends Controller
 {
     /*
@@ -62,9 +62,10 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \App\Models\User
      */
-    public function getRegister()
+    public function showRegistrationForm()
     {
-       return view('register');
+        $brands = Brand::all();
+       return view('auth\register', ['brands'=>$brands]);
     }
     protected function create(array $data)
     {

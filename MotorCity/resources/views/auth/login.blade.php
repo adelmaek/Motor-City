@@ -1,13 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container-fluid" >
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Login') }}</div>
+            <img src="{{ asset('Logo.png')}}" class="img-fluid mx-auto d-block" alt="Motor City Logo" width="60%" height="70%">
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            {{-- <div class="card">
+                <div class="card-header m-b-0 text-white bg-dark">{{ __('Login') }}</div>
 
-                <div class="card-body">
+                <div class="card-body"> --}}
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
 
@@ -53,7 +58,7 @@
 
                         <div class="form-group row mb-0">
                             <div class="col-md-8 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-dark">
                                     {{ __('Login') }}
                                 </button>
 
@@ -65,8 +70,8 @@
                             </div>
                         </div>
                     </form>
-                </div>
-            </div>
+                {{-- </div>
+            </div> --}}
         </div>
     </div>
 </div>

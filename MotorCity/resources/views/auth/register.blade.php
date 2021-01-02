@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Register') }}</div>
+                <div class="card-header m-b-0 text-white bg-dark">{{ __('Register') }}</div>
 
                 <div class="card-body">
                     <form method="POST" action="{{ route('register') }}">
@@ -60,18 +60,20 @@
                                 <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
                             </div>
                         </div>
-                        {{-- <div class="form-group row">
-                            <label for="brandInput">Bank Name</label>
-                            <input list="brandInputList" class="form-control" id="brandInput" name="brandInput" required >
-                            <datalist id="brandInputList">
-                                @foreach ($brands as $brand)
-                                    <option value="{{$brand->name}}">{{$brand->name}}</option>
-                                @endforeach
-                            </datalist>
-                        </div> --}}
+                        <div class="form-group row">
+                            <label for="brandInput" class="col-md-4 col-form-label text-md-right">Assign a brand</label>
+                            <div class="col-md-6">
+                                <select  class="form-control" id="brandId" name="brandId" required >
+                                    <option value="" disabled selected>Choose brand</option>
+                                    @foreach ($brands as $brand)
+                                        <option value="{{$brand->id}}">{{$brand->name}}</option>
+                                    @endforeach                                        
+                                </select>
+                            </div>
+                        </div>
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-dark">
                                     {{ __('Register') }}
                                 </button>
                             </div>

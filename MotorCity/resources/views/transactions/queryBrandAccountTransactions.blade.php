@@ -9,7 +9,17 @@
             <div class="card border-dark">
                 <div class="card-header m-b-0 text-white bg-dark">Transaction</div>
                 <div class="card-body" id="inputs">
-                    <h3 class="card-title">Query Transactions</h3>
+                    @if(!strcmp('cash', $accountType))
+                        <h3 class="card-title">Query Cash Transactions</h3>
+                    @elseif(!strcmp('cashDollar', $accountType))
+                        <h3 class="card-title">Query Cash Dollar Transactions</h3>
+                    @elseif(!strcmp('custodyCash', $accountType))
+                        <h3 class="card-title">Query Custody Cash Transactions</h3>
+                    @elseif(!strcmp('check', $accountType))
+                        <h3 class="card-title">Query Checks Transactions</h3>
+                    @elseif(!strcmp('visa', $accountType))
+                        <h3 class="card-title">Query Visa Transactions</h3>
+                    @endif
                     <form action="{{route('queryBrandAccountTransaction',[$accountType])}}" method="post">
                         <div class="row">
                             <div class="col-md-4">
@@ -87,7 +97,7 @@
                                     </td>
                                 @endif
                                 <td style="text-align:center">
-                                    <a class="btn btn-danger delete-confirm" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="#" role="button">Delete</a>
+                                    <a class="btn btn-danger delete-confirm" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('deleteTransaction',[$trans->id])}}" role="button">Delete</a>
                                 </td>
                             </tr>
                         @endforeach
