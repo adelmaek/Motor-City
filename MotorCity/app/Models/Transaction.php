@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\TransactionRow;
 use Log;
+use DB;
+use Illuminate\Support\Facades\Auth;
+
 class Transaction extends Model
 {
     use HasFactory;
@@ -18,12 +21,12 @@ class Transaction extends Model
         'value',
         'date',
         'fromBankId',
-        'toBankId',
+        'toBankAccountId',
         'description',
         'clientName',
         'currentBalance'
     ];
-    public function init($accountId=null, $userId=null, $type=null, $value=null, $date=null, $fromBankId=null, $toBankId=null, $description=null, $clientName=null, $brandId)
+    public function init($accountId=null, $userId=null, $type=null, $value=null, $date=null, $fromBankId=null, $toBankAccountId=null, $settled=null, $description=null, $clientName=null, $brandId)
     {
         $this->brandId = $brandId;
         $this->accountId = $accountId;
@@ -32,7 +35,8 @@ class Transaction extends Model
         $this->value = $value;
         $this->date = $date;
         $this->fromBankId = $fromBankId;
-        $this->toBankId = $toBankId;
+        $this->toBankAccountId = $toBankAccountId;
+        $this->settled = $settled;
         $this->description = $description;
         $this->clientName = $clientName;        
        
@@ -154,7 +158,7 @@ class Transaction extends Model
         $transactionsRows = [];
         foreach($transactions as $trans)
         {
-            $transRow = new TransactionRow($trans->date);
+            $transRow = new TransactionRow($trans->date, $trans->description, $trans->clientName);
             $account = Account::where('id',$trans->accountId)->first();
             if(!strcmp($account->type,"cash"))
             {
@@ -247,5 +251,27 @@ class Transaction extends Model
         if($deletionStatus)
             Transaction::updateCurrentBalanceOnDeletion($transactionDate, $accountId);
         return $deletionStatus;
+    }
+
+    public static function settleCheck($transaction)
+    {
+        if($transaction->settled)
+            return;
+        
+        $transaction->settled = true;
+
+        $bankTransaction = new Transaction();
+        
+        
+        $toBankAccount = Account::where('id', $transaction->toBankAccountId)->first();
+
+        $toBankAccount->balance = $toBankAccount->balance + $transaction->value;
+        
+        DB::transaction(function () use($transaction, $toBankAccount, $bankTransaction) {
+            $transaction->save();
+            $toBankAccount->save();
+            $bankTransaction->init($transaction->toBankAccountId, Auth::user()->id, "add", $transaction->value, $transaction->date, null, null,null ,$transaction->description, $transaction->clientName, $transaction->brandId);
+            $bankTransaction->save();
+        }, 5);
     }
 }

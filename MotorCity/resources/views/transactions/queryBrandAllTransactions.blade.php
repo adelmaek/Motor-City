@@ -50,25 +50,29 @@
                     <table  id="transactionsTable" class="table color-bordered-table table-striped full-color-table full-info-table hover-table " style="width:100%">
                         <thead style="width:100%">
                             <tr>
-                                <th scope="col" style="text-align:center">Date</th>
+                                <th scope="col" style="text-align:center"><div>Date</div> <div><br></div></th>
                                 <th scope="col" style="text-align:center"><div>Cash</div> <div>{{$cashBalance}}</div></th>
                                 <th scope="col" style="text-align:center"><div>Custody Cash</div> <div>{{$custodyCashBalance}}</div></th>
                                 <th scope="col" style="text-align:center"><div>Cash Dollar</div> <div>{{$cashDollarBalance}}</div></th>
                                 <th scope="col" style="text-align:center"><div>Checks</div> <div>{{$checKBalance}}</div></th>
                                 <th scope="col" style="text-align:center"><div>Visa</div> <div>{{$visaBalance}}</div></th>
                                 <th scope="col" style="text-align:center"><div>Banks</div> <div>{{$banksBalance}}</div></th>
+                                <th scope="col" style="text-align:center"><div>Description</div> <div><br></div></th>
+                                <th scope="col" style="text-align:center"><div>Client Name</div> <div><br></div></th>
                             </tr>
                         </thead>
                         <tbody>
                         @foreach ($transactionsRows as $row)
                             <tr>
-                                <td style="text-align:center">{{$row->date}}</td>
-                                <td style="text-align:center">{{$row->cash}}</td>
-                                <td style="text-align:center">{{$row->custodyCash}}</td>
-                                <td style="text-align:center">{{$row->cashDollar}}</td>
-                                <td style="text-align:center">{{$row->check}}</td>
-                                <td style="text-align:center">{{$row->visa}}</td>
-                                <td style="text-align:center">{{$row->banks}}</td>
+                                <td style="text-align:center; border: 1px solid black;">{{$row->date}}</td>
+                                <td style="text-align:center; border: 1px solid black;">{{$row->cash}}</td>
+                                <td style="text-align:center; border: 1px solid black;">{{$row->custodyCash}}</td>
+                                <td style="text-align:center; border: 1px solid black;">{{$row->cashDollar}}</td>
+                                <td style="text-align:center; border: 1px solid black;">{{$row->check}}</td>
+                                <td style="text-align:center; border: 1px solid black;">{{$row->visa}}</td>
+                                <td style="text-align:center; border: 1px solid black;">{{$row->banks}}</td>
+                                <td style="text-align:center; border: 1px solid black;">{{$row->description}}</td>
+                                <td style="text-align:center; border: 1px solid black;">{{$row->clientName}}</td>
                             </tr>
                         @endforeach
                         </tbody>

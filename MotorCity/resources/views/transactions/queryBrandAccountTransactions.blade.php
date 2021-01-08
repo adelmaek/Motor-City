@@ -93,7 +93,12 @@
                                 <td style="text-align:center">{{$trans->clientName}}</td>
                                 @if(!strcmp("check",$accountType))
                                     <td style="text-align:center">
-                                        <a class="btn btn-info settle-confirm" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="#" role="button">Settle</a>
+                                        @if(!$trans->settled)
+                                            <a class="btn btn-info settle-confirm" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('settleCheck',[$trans->id])}}" role="button">Settle</a>
+                                        @endif
+                                        @if($trans->settled)
+                                            Settled
+                                        @endif
                                     </td>
                                 @endif
                                 <td style="text-align:center">

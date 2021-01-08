@@ -42,9 +42,9 @@ class TransactionController extends Controller
         $transaction = new Transaction();
         DB::transaction(function () use($balanceInput, $transaction, $account, $request,$brandId){
             if(!strcmp($balanceInput,"check"))
-                $transaction->init($account->id, Auth::user()->id, $request['typeInput'], $request['valueInput'], $request['dateInput'], $request['fromBankInput'], $request['toBankInput'], $request['noteInput'], $request['clientNameInput'], $brandId);
+                $transaction->init($account->id, Auth::user()->id, $request['typeInput'], $request['valueInput'], $request['dateInput'], $request['checkIsFromBankInput'], $request['checkIsToBankInput'], false,$request['noteInput'], $request['clientNameInput'], $brandId);
             else
-                $transaction->init($account->id, Auth::user()->id, $request['typeInput'], $request['valueInput'], $request['dateInput'], null, null, $request['noteInput'], $request['clientNameInput'], $brandId);
+                $transaction->init($account->id, Auth::user()->id, $request['typeInput'], $request['valueInput'], $request['dateInput'], null, null,null ,$request['noteInput'], $request['clientNameInput'], $brandId);
         
             $transSaved = $transaction->save();
             if($transSaved)
@@ -79,7 +79,6 @@ class TransactionController extends Controller
 
     public function getBrandAllTransactions(Request $request)
     {
-        Log::debug('a7a');
         $brands = Brand::all();
         $brandId = 0; //just intialization
         if($request['brandIdInput'] === null) //if a none admin user
@@ -167,5 +166,10 @@ class TransactionController extends Controller
         return redirect()->back();
     }
 
-
+    public function getSettleCheck($transactionId)
+    {
+        $transaction = Transaction::where('id', $transactionId)->first();
+        Transaction::settleCheck($transaction);
+        return redirect()->back();
+    }
 }

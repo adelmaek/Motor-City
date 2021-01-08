@@ -12,7 +12,9 @@ class TransactionRow
     public $check;
     public $visa;
     public $banks;
-    public function __construct($date) 
+    public $description;
+    public $clientName;
+    public function __construct($date, $description, $clientName) 
     {
       $this->date = $date;
       $this->cash = 0;
@@ -21,6 +23,8 @@ class TransactionRow
       $this->check = 0;
       $this->visa = 0;
       $this->banks = 0;
+      $this->description = $description;
+      $this->clientName = $clientName;
     }
 
 }

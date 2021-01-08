@@ -34,7 +34,7 @@ class HomeController extends Controller
         $brands = Brand::all();
         $currentUserAccounts = Auth::user()->getCurrentUserAccounts();
         $transactions = [];
-        $transactions = Transaction::where('userId', Auth::user()->id)->limit(20)->orderBy('id','Desc')->get();
+        $transactions = Transaction::where('userId', Auth::user()->id)->limit(100)->orderBy('id','Desc')->get();
         return view('home',["banks"=>$banks, "bankAccounts"=>$bankAccounts, "brands"=>$brands, "currentUserAccounts"=>$currentUserAccounts, 'transactions'=>$transactions] );
     }
 }

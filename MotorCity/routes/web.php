@@ -40,3 +40,4 @@ Route::post('/queryBrandAccountTransaction/{accountType}', [App\Http\Controllers
 Route::get('/queryBankAccountTransaction/{accountId}',[App\Http\Controllers\TransactionController::class, 'getQueryBankAccountTransaction'])->name('queryBankAccountTransaction')->middleware('auth');
 Route::post('/queryBankAccountTransaction/{accountId}',[App\Http\Controllers\TransactionController::class, 'getBankAccountTransaction'])->name('queryBankAccountTransaction')->middleware('auth');
 Route::get('/deleteTransaction/{transactionId}',[App\Http\Controllers\TransactionController::class, 'getDeleteTransaction'])->name('deleteTransaction')->middleware('auth');
+Route::get('/settleCheck/{transactionId}',[App\Http\Controllers\TransactionController::class, 'getSettleCheck'])->name('settleCheck')->middleware('auth');

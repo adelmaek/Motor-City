@@ -73,19 +73,19 @@
                                     <select class="form-control" style="height: 42px;" id="checkIsFromBankInput" name="checkIsFromBankInput" >
                                         <option value="" disabled selected>From bank</option>
                                         @foreach ($banks as $bank)
-                                            <option value="bank->id">{{$bank->name}}</option>
+                                            <option value="{{$bank->id}}">{{$bank->name}}</option>
                                         @endforeach
-                                        <option value="others">Others</option>
+                                        <option value="-1">Others</option>
                                     </select>
                                   </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="checkIsToBankInput">Check to bank</label>
-                                    <select class="form-control" style="height: 42px;" id="checkIsToBankInput" name="checkIsFromBankInput" >
-                                        <option value="" disabled selected>To bank</option>
-                                        @foreach ($banks as $bank)
-                                            <option value="bank->id">{{$bank->name}}</option>
+                                    <label for="checkIsToBankInput">Check to bank account</label>
+                                    <select class="form-control" style="height: 42px;" id="checkIsToBankInput" name="checkIsToBankInput" >
+                                        <option value="" disabled selected>To bank account</option>
+                                        @foreach ($bankAccounts as $bankAccount)
+                                            <option value="{{$bankAccount->id}}">{{$bankAccount->name}}</option>
                                         @endforeach
                                     </select>
                                   </div>
