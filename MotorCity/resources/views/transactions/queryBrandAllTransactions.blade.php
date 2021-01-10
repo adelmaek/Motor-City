@@ -51,12 +51,12 @@
                         <thead style="width:100%">
                             <tr>
                                 <th scope="col" style="text-align:center"><div>Date</div> <div><br></div></th>
-                                <th scope="col" style="text-align:center"><div>Cash</div> <div>{{$cashBalance}}</div></th>
-                                <th scope="col" style="text-align:center"><div>Custody Cash</div> <div>{{$custodyCashBalance}}</div></th>
-                                <th scope="col" style="text-align:center"><div>Cash Dollar</div> <div>{{$cashDollarBalance}}</div></th>
-                                <th scope="col" style="text-align:center"><div>Checks</div> <div>{{$checKBalance}}</div></th>
-                                <th scope="col" style="text-align:center"><div>Visa</div> <div>{{$visaBalance}}</div></th>
-                                <th scope="col" style="text-align:center"><div>Banks</div> <div>{{$banksBalance}}</div></th>
+                                <th scope="col" style="text-align:center"><div>Cash</div> <div>{{number_format($cashBalance)}}</div></th>
+                                <th scope="col" style="text-align:center"><div>Custody Cash</div> <div>{{number_format($custodyCashBalance)}}</div></th>
+                                <th scope="col" style="text-align:center"><div>Cash Dollar</div> <div>{{number_format($cashDollarBalance)}}</div></th>
+                                <th scope="col" style="text-align:center"><div>Checks</div> <div>{{number_format($checKBalance)}}</div></th>
+                                <th scope="col" style="text-align:center"><div>Visa</div> <div>{{number_format($visaBalance)}}</div></th>
+                                <th scope="col" style="text-align:center"><div>Banks</div> <div>{{number_format($banksBalance)}}</div></th>
                                 <th scope="col" style="text-align:center"><div>Description</div> <div><br></div></th>
                                 <th scope="col" style="text-align:center"><div>Client Name</div> <div><br></div></th>
                             </tr>
@@ -65,12 +65,12 @@
                         @foreach ($transactionsRows as $row)
                             <tr>
                                 <td style="text-align:center; border: 1px solid black;">{{$row->date}}</td>
-                                <td style="text-align:center; border: 1px solid black;">{{$row->cash}}</td>
-                                <td style="text-align:center; border: 1px solid black;">{{$row->custodyCash}}</td>
-                                <td style="text-align:center; border: 1px solid black;">{{$row->cashDollar}}</td>
-                                <td style="text-align:center; border: 1px solid black;">{{$row->check}}</td>
-                                <td style="text-align:center; border: 1px solid black;">{{$row->visa}}</td>
-                                <td style="text-align:center; border: 1px solid black;">{{$row->banks}}</td>
+                                <td style="text-align:center; border: 1px solid black;">{{number_format($row->cash)}}</td>
+                                <td style="text-align:center; border: 1px solid black;">{{number_format($row->custodyCash)}}</td>
+                                <td style="text-align:center; border: 1px solid black;">{{number_format($row->cashDollar)}}</td>
+                                <td style="text-align:center; border: 1px solid black;">{{number_format($row->check)}}</td>
+                                <td style="text-align:center; border: 1px solid black;">{{number_format($row->visa)}}</td>
+                                <td style="text-align:center; border: 1px solid black;">{{number_format($row->banks)}}</td>
                                 <td style="text-align:center; border: 1px solid black;">{{$row->description}}</td>
                                 <td style="text-align:center; border: 1px solid black;">{{$row->clientName}}</td>
                             </tr>
