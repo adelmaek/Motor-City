@@ -15,7 +15,7 @@ class AccountController extends Controller
     {
         $banks = Bank::all();
         $brands = Brand::all();
-        return view('accounts/addAccount',["banks"=>$banks, "brands"=>$brands]);
+        return view('accounts.addAccount',["banks"=>$banks, "brands"=>$brands]);
     }
     //
     public function postInsertAccount(Request $request)
