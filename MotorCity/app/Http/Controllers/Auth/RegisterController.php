@@ -65,7 +65,7 @@ class RegisterController extends Controller
     public function showRegistrationForm()
     {
         $brands = Brand::all();
-       return view('auth\register', ['brands'=>$brands]);
+       return view('auth.register', ['brands'=>$brands]);
     }
     protected function create(array $data)
     {

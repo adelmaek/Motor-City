@@ -67,7 +67,7 @@ class TransactionController extends Controller
     public function getQueryBrandAllTransactions()
     {
         $brands = Brand::all();
-        return view('transactions/queryBrandAllTransactions',["transactionsRows"=>[],
+        return view('transactions.queryBrandAllTransactions',["transactionsRows"=>[],
                                                             "cashBalance"=>0,
                                                             "cashDollarBalance"=>0,
                                                             "custodyCashBalance"=>0,
@@ -99,7 +99,7 @@ class TransactionController extends Controller
 
         $transactionsRows = Transaction::transactionsToTransactionsRows($transactions);
         // Log::debug($transactionsRows);
-        return view('transactions/queryBrandAllTransactions',["transactionsRows"=>$transactionsRows,
+        return view('transactions.queryBrandAllTransactions',["transactionsRows"=>$transactionsRows,
                                                             "cashBalance"=>$brandCashBalanceAtToDate,
                                                             "cashDollarBalance"=>$brandCashDollarBalanceAtToDate,
                                                             "custodyCashBalance"=>$brandCustodyCashBalanceAtToDate,
@@ -112,7 +112,7 @@ class TransactionController extends Controller
     public function getQueryAccountTransaction($accountType)
     {
         $brands = Brand::all();
-        return view('transactions/queryBrandAccountTransactions',['accountType'=>$accountType, 'transactions'=>[], 'brands'=>$brands]);
+        return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType, 'transactions'=>[], 'brands'=>$brands]);
     }
 
     public function getBrandAccountTransaction($accountType, Request $request)
@@ -125,7 +125,7 @@ class TransactionController extends Controller
             $brandId = Auth::user()->brandId;
         $account = Account::where('brandID',$brandId)->where("type", $accountType)->first();
         if($account === null)
-            return view('transactions/queryBrandAccountTransactions',['accountType'=>$accountType,'transactions'=>[], 'brands'=>$brands]);
+            return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType,'transactions'=>[], 'brands'=>$brands]);
 
         $fromDate = $request['fromDateInput'];
         $toDate = $request['toDateInput'];
@@ -133,13 +133,13 @@ class TransactionController extends Controller
         $transactions = [];
         $transactions = Transaction::getTransactionOfAccount( $account->id, $fromDate, $toDate);
 
-        return view('transactions/queryBrandAccountTransactions',['accountType'=>$accountType,'transactions'=>$transactions, 'brands'=>$brands]);
+        return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType,'transactions'=>$transactions, 'brands'=>$brands]);
     }
 
     public function getQueryBankAccountTransaction($accountId)
     {
         $transactions = [];
-        return view('transactions/queryBankAccountTransactions',['accountId'=>$accountId,'transactions'=>$transactions]);
+        return view('transactions.queryBankAccountTransactions',['accountId'=>$accountId,'transactions'=>$transactions]);
     }
     public function getBankAccountTransaction($accountId, Request $request)
     {
@@ -148,7 +148,7 @@ class TransactionController extends Controller
 
         $transactions = [];
         $transactions = Transaction::getTransactionOfAccount( $accountId, $fromDate, $toDate);
-        return view('transactions/queryBankAccountTransactions',['accountId'=>$accountId,'transactions'=>$transactions]);
+        return view('transactions.queryBankAccountTransactions',['accountId'=>$accountId,'transactions'=>$transactions]);
     }
 
     public function getDeleteTransaction($transactionId)
