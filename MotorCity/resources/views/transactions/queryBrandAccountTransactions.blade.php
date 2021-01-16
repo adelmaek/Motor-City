@@ -85,16 +85,16 @@
                                     <td style="text-align:center">{{$trans->checkValidityDate}}</td>
                                 @endif
                                 @if(!strcmp($trans->type,"add"))
-                                    <td style="text-align:center">{{$trans->value}}</td>
+                                    <td style="text-align:center">{{number_format($trans->value)}}</td>
                                 @else
                                     <td style="text-align:center"> - </td>
                                 @endif
                                 @if(!strcmp($trans->type,"sub"))
-                                    <td style="text-align:center">{{$trans->value}}</td>
+                                    <td style="text-align:center">{{number_format($trans->value)}}</td>
                                 @else
                                     <td style="text-align:center"> - </td>
                                 @endif
-                                <td style="text-align:center">{{$trans->currentBalance}}</td>
+                                <td style="text-align:center">{{number_format($trans->currentBalance)}}</td>
                                 <td style="text-align:center">{{$trans->description}}</td>
                                 <td style="text-align:center">{{$trans->clientName}}</td>
                                 @if(!strcmp("check",$accountType))

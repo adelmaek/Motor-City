@@ -130,7 +130,7 @@
                             @foreach ($currentUserAccounts as $account)
                                 <tr>
                                     <td style="text-align:center">{{$account->name}}</td>
-                                    <td style="text-align:center">{{$account->balance}}</td>
+                                    <td style="text-align:center">{{number_format($account->balance)}}</td>
                                 </tr>
                             @endforeach
                             </tbody>
@@ -166,7 +166,7 @@
                                 @else
                                     <td style="text-align:center">Withdrawal</td>
                                 @endif
-                                <td style="text-align:center">{{$trans->value}}</td> 
+                                <td style="text-align:center">{{number_format($trans->value)}}</td> 
                                 <td style="text-align:center">{{$trans->description}}</td>
                                 <td style="text-align:center">{{$trans->clientName}}</td>
                                 <td style="text-align:center">
