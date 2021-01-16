@@ -63,11 +63,11 @@
                                 <div class="form-group">
                                     <label for="dateInput">Date</label>
                                     <input type="date" class="form-control" id="dateInput" name="dateInput" style="height: 42px;" required>     
-                                  </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="row" id="checkBanks">
-                            <div class="col-md-6">
+                        <div class="row" id="checkSpecialInput">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="checkIsFromBankInput">Check form bank</label>
                                     <select class="form-control" style="height: 42px;" id="checkIsFromBankInput" name="checkIsFromBankInput" >
@@ -79,16 +79,17 @@
                                     </select>
                                   </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="checkIsToBankInput">Check to bank account</label>
-                                    <select class="form-control" style="height: 42px;" id="checkIsToBankInput" name="checkIsToBankInput" >
-                                        <option value="" disabled selected>To bank account</option>
-                                        @foreach ($bankAccounts as $bankAccount)
-                                            <option value="{{$bankAccount->id}}">{{$bankAccount->name}}</option>
-                                        @endforeach
-                                    </select>
-                                  </div>
+                                    <label for="checkNumberInput">Check number</label>
+                                    <input type="text" class="form-control" id="checkNumberInput" name="checkNumberInput" placeholder="Check Number" required style="min-width: 100px;" >
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="dateInput">Validity Date</label>
+                                    <input type="date" class="form-control" id="checkValidityDateInput" name="checkValidityDateInput" style="height: 42px;" required>  
+                                </div>
                             </div>
                         </div>
                         <div class="row">
@@ -190,9 +191,9 @@
         $("select.balanceInput").change(function(){
             var selectedBalance = $(this).children("option:selected").val();
             if(!selectedBalance.localeCompare("check"))
-                $('#checkBanks').show();
+                $('#checkSpecialInput').show();
             else
-                $('#checkBanks').hide();
+                $('#checkSpecialInput').hide();
         });
     });
 </script>

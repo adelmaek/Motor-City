@@ -21,8 +21,12 @@ class CreateTransactionsTable extends Migration
             $table->bigInteger('brandId');
             $table->string('type');
             $table->bigInteger('fromBankId')->nullable();
-            $table->bigInteger('toBankAccountId')->nullable();
+            $table->string('checkNumber')->nullable();
+            $table->date('checkValidityDate')->nullable();
+            $table->bigInteger('checKToBankId')->nullable();
+            $table->date('checkSettlingDate')->nullable();
             $table->boolean('settled')->nullable();
+            $table->boolean('confirmSettling')->nullable();
             $table->bigInteger('userId');
             $table->string('description');
             $table->string('clientName');

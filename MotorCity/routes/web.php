@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Account;
 use App\Models\Bank;
 use App\Models\Brand;
+use Carbon\Carbon;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -40,4 +41,5 @@ Route::post('/queryBrandAccountTransaction/{accountType}', [App\Http\Controllers
 Route::get('/queryBankAccountTransaction/{accountId}',[App\Http\Controllers\TransactionController::class, 'getQueryBankAccountTransaction'])->name('queryBankAccountTransaction')->middleware('auth');
 Route::post('/queryBankAccountTransaction/{accountId}',[App\Http\Controllers\TransactionController::class, 'getBankAccountTransaction'])->name('queryBankAccountTransaction')->middleware('auth');
 Route::get('/deleteTransaction/{transactionId}',[App\Http\Controllers\TransactionController::class, 'getDeleteTransaction'])->name('deleteTransaction')->middleware('auth');
-Route::get('/settleCheck/{transactionId}',[App\Http\Controllers\TransactionController::class, 'getSettleCheck'])->name('settleCheck')->middleware('auth');
+Route::post('/settleCheck/{transactionId}',[App\Http\Controllers\TransactionController::class, 'postSettleCheck'])->name('settleCheck')->middleware('auth');
+Route::get('/confirmSettling/{transactionId}',[App\Http\Controllers\TransactionController::class, 'getConfirmCheckSettling'])->name('confirmSettling')->middleware('auth');

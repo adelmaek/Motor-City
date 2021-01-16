@@ -21,12 +21,13 @@ class Transaction extends Model
         'value',
         'date',
         'fromBankId',
-        'toBankAccountId',
+        'checkNumber',
+        'checkValidityDate',
         'description',
         'clientName',
         'currentBalance'
     ];
-    public function init($accountId=null, $userId=null, $type=null, $value=null, $date=null, $fromBankId=null, $toBankAccountId=null, $settled=null, $description=null, $clientName=null, $brandId)
+    public function init($accountId=null, $userId=null, $type=null, $value=null, $date=null, $fromBankId=null, $checkNumber=null,$validityDate=null, $settled=null, $confirmSettling =null,$checKToBankId,$checkSettlingDate, $description=null, $clientName=null, $brandId)
     {
         $this->brandId = $brandId;
         $this->accountId = $accountId;
@@ -35,10 +36,14 @@ class Transaction extends Model
         $this->value = $value;
         $this->date = $date;
         $this->fromBankId = $fromBankId;
-        $this->toBankAccountId = $toBankAccountId;
+        $this->checkNumber = $checkNumber;
+        $this->checkValidityDate = $validityDate;
         $this->settled = $settled;
+        $this->confirmSettling = $confirmSettling;
         $this->description = $description;
-        $this->clientName = $clientName;        
+        $this->clientName = $clientName;       
+        $this->checKToBankId = $checKToBankId;
+        $this->checkSettlingDate = $checkSettlingDate;
        
         $this->updateCurrentBalanceOnAddition();
 
@@ -253,25 +258,25 @@ class Transaction extends Model
         return $deletionStatus;
     }
 
-    public static function settleCheck($transaction)
-    {
-        if($transaction->settled)
-            return;
+    // public static function settleCheck($transaction)
+    // {
+    //     if($transaction->settled)
+    //         return;
         
-        $transaction->settled = true;
+    //     $transaction->settled = true;
 
-        $bankTransaction = new Transaction();
+    //     // $bankTransaction = new Transaction();
         
         
-        $toBankAccount = Account::where('id', $transaction->toBankAccountId)->first();
+    //     // $toBankAccount = Account::where('id', $transaction->toBankAccountId)->first();
 
-        $toBankAccount->balance = $toBankAccount->balance + $transaction->value;
+    //     // $toBankAccount->balance = $toBankAccount->balance + $transaction->value;
         
-        DB::transaction(function () use($transaction, $toBankAccount, $bankTransaction) {
-            $transaction->save();
-            $toBankAccount->save();
-            $bankTransaction->init($transaction->toBankAccountId, Auth::user()->id, "add", $transaction->value, $transaction->date, null, null,null ,$transaction->description, $transaction->clientName, $transaction->brandId);
-            $bankTransaction->save();
-        }, 5);
-    }
+    //     // DB::transaction(function () use($transaction, $toBankAccount, $bankTransaction) {
+    //     //     $transaction->save();
+    //     //     $toBankAccount->save();
+    //     //     $bankTransaction->init($transaction->toBankAccountId, Auth::user()->id, "add", $transaction->value, $transaction->date, null, null, null, null, null ,$transaction->description, $transaction->clientName, $transaction->brandId);
+    //     //     $bankTransaction->save();
+    //     // }, 5);
+    // }
 }

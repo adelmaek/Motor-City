@@ -8,6 +8,7 @@ use App\Models\Account;
 use App\Models\Brand;
 use App\Models\Transaction;
 use App\Models\TransactionRow;
+use Carbon\Carbon;
 use Log;
 use DB;
 class TransactionController extends Controller
@@ -42,9 +43,9 @@ class TransactionController extends Controller
         $transaction = new Transaction();
         DB::transaction(function () use($balanceInput, $transaction, $account, $request,$brandId){
             if(!strcmp($balanceInput,"check"))
-                $transaction->init($account->id, Auth::user()->id, $request['typeInput'], $request['valueInput'], $request['dateInput'], $request['checkIsFromBankInput'], $request['checkIsToBankInput'], false,$request['noteInput'], $request['clientNameInput'], $brandId);
+                $transaction->init($account->id, Auth::user()->id, $request['typeInput'], $request['valueInput'], $request['dateInput'], $request['checkIsFromBankInput'], $request['checkNumberInput'], $request['checkValidityDateInput'], false,false,null,null,$request['noteInput'], $request['clientNameInput'], $brandId);
             else
-                $transaction->init($account->id, Auth::user()->id, $request['typeInput'], $request['valueInput'], $request['dateInput'], null, null,null ,$request['noteInput'], $request['clientNameInput'], $brandId);
+                $transaction->init($account->id, Auth::user()->id, $request['typeInput'], $request['valueInput'], $request['dateInput'], null, null,null ,null,null,null,null,$request['noteInput'], $request['clientNameInput'], $brandId);
         
             $transSaved = $transaction->save();
             if($transSaved)
@@ -111,12 +112,17 @@ class TransactionController extends Controller
 
     public function getQueryAccountTransaction($accountType)
     {
+        $todayDate = Carbon::today()->toDateString();
         $brands = Brand::all();
-        return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType, 'transactions'=>[], 'brands'=>$brands]);
+        $bankAccounts = Account::getBankAccounts();
+        return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType, 'transactions'=>[], 'brands'=>$brands, "todayDate"=>$todayDate, "bankAccounts"=>$bankAccounts]);
     }
 
     public function getBrandAccountTransaction($accountType, Request $request)
     {
+        $bankAccounts = Account::getBankAccounts();
+        $todayDate = Carbon::today()->toDateString();
+
         $brands = Brand::all();
         $brandId = 0; //just intialization
         if($request['brandIdInput'] != null)
@@ -125,15 +131,17 @@ class TransactionController extends Controller
             $brandId = Auth::user()->brandId;
         $account = Account::where('brandID',$brandId)->where("type", $accountType)->first();
         if($account === null)
-            return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType,'transactions'=>[], 'brands'=>$brands]);
+            return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType,'transactions'=>[], 'brands'=>$brands, "todayDate"=>$todayDate, "bankAccounts"=>$bankAccounts]);
 
         $fromDate = $request['fromDateInput'];
         $toDate = $request['toDateInput'];
-
+        
         $transactions = [];
         $transactions = Transaction::getTransactionOfAccount( $account->id, $fromDate, $toDate);
 
-        return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType,'transactions'=>$transactions, 'brands'=>$brands]);
+        
+
+        return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType,'transactions'=>$transactions, 'brands'=>$brands, "todayDate"=>$todayDate, "bankAccounts"=>$bankAccounts]);
     }
 
     public function getQueryBankAccountTransaction($accountId)
@@ -166,10 +174,40 @@ class TransactionController extends Controller
         return redirect()->back();
     }
 
-    public function getSettleCheck($transactionId)
+    public function postSettleCheck(Request $request,$transactionId)
     {
         $transaction = Transaction::where('id', $transactionId)->first();
-        Transaction::settleCheck($transaction);
+        // Transaction::settleCheck($transaction);
+        // Log::debug($request);
+        // Log::debug($transactionId);
+        $transaction->settled = true;
+        $transaction->checkSettlingDate = $request['settlingDateInput'];
+        $transaction->checKToBankId = $request['settlingBankInput'];
+        $transaction->save();
+
+        return redirect()->back();
+    }
+
+    public function getConfirmCheckSettling($transactionId)
+    {
+        $transaction = Transaction::where('id', $transactionId)->first();
+        $transaction->confirmSettling = true;
+        
+        $bankTransaction = new Transaction();
+        
+        $toBankAccount = Account::where('id', $transaction->checKToBankId)->first();
+
+        $toBankAccount->balance = $toBankAccount->balance + $transaction->value;
+        
+        $description = "Cashing check number" .": ". $transaction->checkNumber;
+
+        DB::transaction(function () use($transaction, $toBankAccount, $bankTransaction, $description) {
+            $transaction->save();
+            $toBankAccount->save();
+            $bankTransaction->init($transaction->checKToBankId, Auth::user()->id, "add", $transaction->value, $transaction->date, null, null, null, null, null ,null,null,$description, $transaction->clientName, $transaction->brandId);
+            $bankTransaction->save();
+        }, 5);
+
         return redirect()->back();
     }
 }
