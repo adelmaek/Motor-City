@@ -103,7 +103,7 @@
                                             @if(\Carbon\Carbon::parse($trans->checkValidityDate)->gt(\Carbon\Carbon::parse($todayDate)))
                                                 <a class="btn btn-info disabled"  style="height:25px;padding: 3px 8px;padding-bottom: 3px;" role="button">Settle</a>
                                             @else
-                                                <a class="btn btn-info " data-toggle="modal" data-target="#settlingModal" style="height:25px;padding: 3px 8px;padding-bottom: 3px;"  role="button">Settle</a>
+                                                <a class="btn btn-info " id="modalButton" data-item="{{$trans->id}}" data-toggle="modal" data-target="#settlingModal" style="height:25px;padding: 3px 8px;padding-bottom: 3px;"  role="button">Settle</a>
                                             @endif
                                         @endif
                                         @if($trans->settled)
@@ -124,18 +124,18 @@
                                     <a class="btn btn-danger delete-confirm " style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('deleteTransaction',[$trans->id])}}" role="button" >Delete</a>
                                 </td>
                             </tr>
-                            {{-- Modal for each transaction to use transaction id --}}
+                        @endforeach
                             <div class="modal fade" id="settlingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered " role="document">
-                                  <div class="modal-content">
+                                    <div class="modal-content">
                                     <div class="modal-header">
-                                      <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
-                                      </button>
+                                        </button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="{{route('settleCheck',[$trans->id])}}" method="post">
+                                        <form action="{{ url('/') }}" method="post" id="modalForm">
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
@@ -155,17 +155,16 @@
                                                             @endforeach
                                                             <option value="-1">Others</option>
                                                         </select>
-                                                      </div>
+                                                        </div>
                                                 </div>
                                             </div>
                                             <input type="submit" name="submit" class="btn btn-dark btn-md" value="Settle">
                                             <input type="hidden" name="_token" value="{{Session::token()}}">
                                         </form>
                                     </div>
-                                  </div>
+                                    </div>
                                 </div>
                             </div>
-                        @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -198,5 +197,12 @@
         "paging":         false
     });
     $(' .buttons-print,.buttons-excel').addClass('btn btn-primary mr-1');
+</script>
+<script>
+    $(document).on("click", "#modalButton", function () {
+        var itemid = $(this).attr('data-item');
+       var path = $("#modalForm").attr('action')+ "/settleCheck/" +itemid;
+       $("#modalForm").attr('action', path );
+    });
 </script>
 @endsection
