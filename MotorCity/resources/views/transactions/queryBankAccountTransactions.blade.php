@@ -21,7 +21,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="fromDateInput">To Date</label>
-                                    <input type="date" class="form-control" id="toDateInput" name="toDateInput" style="height: 42px;" required>     
+                                    <input type="date" class="form-control" id="toDateInput" name="toDateInput" style="height: 42px;" value={{$today}} required>     
                                   </div>
                             </div>
                             {{-- @if (Auth::user()->admin)
@@ -53,7 +53,7 @@
                         <thead style="width:100%">
                             <tr>
                                 <th scope="col" style="text-align:center">Date</th>
-                                <th scope="col" style="text-align:center">Deposition</th>
+                                <th scope="col" style="text-align:center">Deposite</th>
                                 <th scope="col" style="text-align:center">Withdrawal</th>
                                 <th scope="col" style="text-align:center">Current Balance</th>
                                 <th scope="col" style="text-align:center">Description</th>
@@ -78,9 +78,15 @@
                                 <td style="text-align:center">{{number_format($trans->currentBalance)}}</td>
                                 <td style="text-align:center">{{$trans->description}}</td>
                                 <td style="text-align:center">{{$trans->clientName}}</td>
-                                <td style="text-align:center">
-                                    <a class="btn btn-danger delete-confirm" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('deleteTransaction',[$trans->id])}}" role="button">Delete</a>
-                                </td>
+                                @if(\Carbon\Carbon::parse($trans->date)->gte(\Carbon\Carbon::parse($yesterday)))
+                                    <td style="text-align:center">
+                                        <a class="btn btn-danger delete-confirm" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('deleteTransaction',[$trans->id])}}" role="button">Delete</a>
+                                    </td>
+                                @else 
+                                    <td style="text-align:center">
+                                        <a class="btn btn-danger delete-confirm disabled" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('deleteTransaction',[$trans->id])}}" role="button">Delete</a>
+                                    </td>
+                                @endif
                             </tr>
                         @endforeach
                         </tbody>

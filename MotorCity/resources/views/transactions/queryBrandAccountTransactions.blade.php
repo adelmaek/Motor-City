@@ -66,7 +66,7 @@
                                 @if(!strcmp("check",$accountType))
                                     <th scope="col" style="text-align:center">Validity Date</th>
                                 @endif
-                                <th scope="col" style="text-align:center">Deposition</th>
+                                <th scope="col" style="text-align:center">Deposite</th>
                                 <th scope="col" style="text-align:center">Withdrawal</th>
                                 <th scope="col" style="text-align:center">Current Balance</th>
                                 <th scope="col" style="text-align:center">Description</th>
@@ -120,9 +120,15 @@
                                         @endif
                                     </td>
                                 @endif
-                                <td style="text-align:center">
-                                    <a class="btn btn-danger delete-confirm " style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('deleteTransaction',[$trans->id])}}" role="button" >Delete</a>
-                                </td>
+                                @if(\Carbon\Carbon::parse($trans->date)->gte(\Carbon\Carbon::parse($yesterday)))
+                                    <td style="text-align:center">
+                                        <a class="btn btn-danger delete-confirm " style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('deleteTransaction',[$trans->id])}}" role="button" >Delete</a>
+                                    </td>
+                                @else 
+                                    <td style="text-align:center">
+                                        <a class="btn btn-danger delete-confirm disabled" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('deleteTransaction',[$trans->id])}}" role="button" >Delete</a>
+                                    </td>
+                                @endif
                             </tr>
                         @endforeach
                             <div class="modal fade" id="settlingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

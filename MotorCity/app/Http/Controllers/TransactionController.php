@@ -112,14 +112,16 @@ class TransactionController extends Controller
 
     public function getQueryAccountTransaction($accountType)
     {
+        $yesterday = Carbon::yesterday()->toDateString();
         $todayDate = Carbon::today()->toDateString();
         $brands = Brand::all();
         $bankAccounts = Account::getBankAccounts();
-        return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType, 'transactions'=>[], 'brands'=>$brands, "todayDate"=>$todayDate, "bankAccounts"=>$bankAccounts]);
+        return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType, 'transactions'=>[], 'brands'=>$brands, "todayDate"=>$todayDate, "bankAccounts"=>$bankAccounts,'yesterday'=>$yesterday]);
     }
 
     public function getBrandAccountTransaction($accountType, Request $request)
     {
+        $yesterday = Carbon::yesterday()->toDateString();
         $bankAccounts = Account::getBankAccounts();
         $todayDate = Carbon::today()->toDateString();
 
@@ -141,22 +143,25 @@ class TransactionController extends Controller
 
         
 
-        return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType,'transactions'=>$transactions, 'brands'=>$brands, "todayDate"=>$todayDate, "bankAccounts"=>$bankAccounts]);
+        return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType,'transactions'=>$transactions, 'brands'=>$brands, "todayDate"=>$todayDate, "bankAccounts"=>$bankAccounts, 'yesterday'=>$yesterday]);
     }
 
     public function getQueryBankAccountTransaction($accountId)
     {
+        $yesterday = Carbon::yesterday()->toDateString();
+        $today = Carbon::yesterday()->toDateString();
         $transactions = [];
-        return view('transactions.queryBankAccountTransactions',['accountId'=>$accountId,'transactions'=>$transactions]);
+        return view('transactions.queryBankAccountTransactions',['accountId'=>$accountId,'transactions'=>$transactions, 'yesterday'=>$yesterday, 'today'=>$today]);
     }
     public function getBankAccountTransaction($accountId, Request $request)
     {
         $fromDate = $request['fromDateInput'];
         $toDate = $request['toDateInput'];
-
+        $yesterday = Carbon::yesterday()->toDateString();
+        $today = Carbon::yesterday()->toDateString();
         $transactions = [];
         $transactions = Transaction::getTransactionOfAccount( $accountId, $fromDate, $toDate);
-        return view('transactions.queryBankAccountTransactions',['accountId'=>$accountId,'transactions'=>$transactions]);
+        return view('transactions.queryBankAccountTransactions',['accountId'=>$accountId,'transactions'=>$transactions,'yesterday'=>$yesterday, 'today'=>$today]);
     }
 
     public function getDeleteTransaction($transactionId)

@@ -14,7 +14,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="brandIdInput">Brand</label>
-                                    <select class="form-control" style="height: 42px;" id="brandIdInput" name="brandIdInput" required>
+                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="brandIdInput" name="brandIdInput"  required>
                                         <option value="" disabled selected>Choose brand</option>
                                         @foreach ($brands as $brand)
                                             <option value="{{$brand->id}}">{{$brand->name}}</option>
@@ -28,15 +28,15 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="balanceInput">Balance Name</label>
-                                    <select class="form-control balanceInput" style="height: 42px;" id="balanceInput" name="balanceInput" required>
+                                    <select class="form-control balanceInput" style="height: 42px;border: 2px solid black;" id="balanceInput" name="balanceInput" required>
                                         <option value="" disabled selected>Select Balance</option>
                                         <option value="cash">Cash</option>
                                         <option value="cashDollar">Cash $</option>
-                                        <option value="custodyCash">Custody cash</option>
+                                        {{-- <option value="custodyCash">Custody cash</option> --}}
                                         <option value="check">Check</option>
                                         <option value="visa">Visa</option>
                                         @foreach ($bankAccounts as $bankAccount)
-                                            <option value="{{$bankAccount->id}}">{{$bankAccount->name}}</option>
+                                            <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id', $bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>
                                         @endforeach
                                     </select>
                                   </div>
@@ -44,9 +44,9 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="typeInput">Type</label>
-                                    <select class="form-control" style="height: 42px;" id="typeInput" name="typeInput" required>
-                                        <option value="" disabled selected>Add/Withdraw</option>
-                                        <option value="add">Add</option>
+                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="typeInput" name="typeInput"  required>
+                                        {{-- <option value="" disabled selected>Add/Withdraw</option> --}}
+                                        <option value="add" selected>Add</option>
                                         <option value="sub">Withdraw</option>
                                     </select>
                                   </div>
@@ -56,13 +56,13 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="valueInput">Value</label>
-                                    <input type="number" step ="0.01" class="form-control" id="valueInput" name="valueInput" placeholder="Value" required style="min-width: 100px;" >
+                                    <input type="number" step ="0.01" class="form-control" id="valueInput" name="valueInput" placeholder="Value" required style="min-width: 100px;border: 2px solid black;" >
                                   </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="dateInput">Date</label>
-                                    <input type="date" class="form-control" id="dateInput" name="dateInput" style="height: 42px;" required>     
+                                    <input type="date" class="form-control" id="dateInput" name="dateInput" style="height: 42px;border: 2px solid black;" value="{{$today}}"  required>     
                                 </div>
                             </div>
                         </div>
@@ -70,7 +70,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="checkIsFromBankInput">Check form bank</label>
-                                    <select class="form-control" style="height: 42px;" id="checkIsFromBankInput" name="checkIsFromBankInput" >
+                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="checkIsFromBankInput" name="checkIsFromBankInput" >
                                         <option value="" disabled selected>From bank</option>
                                         @foreach ($banks as $bank)
                                             <option value="{{$bank->id}}">{{$bank->name}}</option>
@@ -82,13 +82,13 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="checkNumberInput">Check number</label>
-                                    <input type="text" class="form-control" id="checkNumberInput" name="checkNumberInput" placeholder="Check Number" required style="min-width: 100px;" >
+                                    <input type="text" class="form-control" id="checkNumberInput" name="checkNumberInput" placeholder="Check Number"  style="min-width: 100px;border: 2px solid black;" >
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="dateInput">Validity Date</label>
-                                    <input type="date" class="form-control" id="checkValidityDateInput" name="checkValidityDateInput" style="height: 42px;" required>  
+                                    <input type="date" class="form-control" id="checkValidityDateInput" name="checkValidityDateInput" style="height: 42px;border: 2px solid black;" >  
                                 </div>
                             </div>
                         </div>
@@ -96,13 +96,13 @@
                             <div class="col-md-8">
                                 <div class="form-group">
                                     <label for="noteInput">Description</label>
-                                    <textarea class="form-control" id="noteInput" name="noteInput" rows="2" required></textarea>
+                                    <textarea class="form-control" id="noteInput" name="noteInput" rows="2" style="border: 2px solid black;" required></textarea>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="clientNameInput">Client Name</label>
-                                    <input type="text" class="form-control" id="clientNameInput" name="clientNameInput" rows="2" required>
+                                    <input type="text" class="form-control" id="clientNameInput" name="clientNameInput" style="border: 2px solid black;" rows="2" required>
                                 </div>
                             </div>
                         </div>
@@ -162,7 +162,7 @@
                             <tr>
                                 <td style="text-align:center">{{$trans->date}}</td>
                                 @if(!strcmp('add', $trans->type))
-                                    <td style="text-align:center">Deposition</td>
+                                    <td style="text-align:center">Deposite</td>
                                 @else
                                     <td style="text-align:center">Withdrawal</td>
                                 @endif

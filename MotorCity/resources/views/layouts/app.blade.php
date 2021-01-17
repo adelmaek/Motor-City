@@ -78,7 +78,7 @@
                                 <a href="javascript:void(0)" class="nav-link dropdown-toggle u-dropdown link hide-menu" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Banks Accounts</a>
                                 <div class="dropdown-menu animated flipInY">
                                     @foreach ($bankAccounts as $bankAccount)
-                                        <a class="dropdown-item" href="{{route('queryBankAccountTransaction',[$bankAccount->id])}}">{{$bankAccount->name}}</a>
+                                        <a class="dropdown-item" href="{{route('queryBankAccountTransaction',[$bankAccount->id])}}">{{App\Models\Bank::where('id', $bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</a>
                                     @endforeach
                                 </div>
                             </div>

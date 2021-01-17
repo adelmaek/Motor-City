@@ -10,6 +10,7 @@ use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Log;
+use Carbon\Carbon;
 class HomeController extends Controller
 {
     /**
@@ -35,6 +36,7 @@ class HomeController extends Controller
         $currentUserAccounts = Auth::user()->getCurrentUserAccounts();
         $transactions = [];
         $transactions = Transaction::where('userId', Auth::user()->id)->limit(100)->orderBy('id','Desc')->get();
-        return view('home',["banks"=>$banks, "bankAccounts"=>$bankAccounts, "brands"=>$brands, "currentUserAccounts"=>$currentUserAccounts, 'transactions'=>$transactions] );
+        $today = Carbon::today()->toDateString();
+        return view('home',["banks"=>$banks, "bankAccounts"=>$bankAccounts, "brands"=>$brands, "currentUserAccounts"=>$currentUserAccounts, 'transactions'=>$transactions,'today'=>$today] );
     }
 }
