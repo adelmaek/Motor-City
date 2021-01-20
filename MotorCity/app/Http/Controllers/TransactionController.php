@@ -206,11 +206,15 @@ class TransactionController extends Controller
         
         $description = "Cashing check number" .": ". $transaction->checkNumber;
 
-        DB::transaction(function () use($transaction, $toBankAccount, $bankTransaction, $description) {
+        $checksAccount = Account::where('id', $transaction->accountId)->first();
+        $checksAccount->balance = $checksAccount->balance - $transaction->value;
+
+        DB::transaction(function () use($transaction, $toBankAccount, $bankTransaction, $description,$checksAccount) {
             $transaction->save();
             $toBankAccount->save();
             $bankTransaction->init($transaction->checKToBankId, Auth::user()->id, "add", $transaction->value, $transaction->date, null, null, null, null, null ,null,null,$description, $transaction->clientName, $transaction->brandId);
             $bankTransaction->save();
+            $checksAccount->save();
         }, 5);
 
         return redirect()->back();

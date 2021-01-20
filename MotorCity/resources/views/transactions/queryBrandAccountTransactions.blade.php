@@ -159,7 +159,6 @@
                                                             @foreach ($bankAccounts as $bankAccount)
                                                                 <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id',$bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>
                                                             @endforeach
-                                                            <option value="-1">Others</option>
                                                         </select>
                                                         </div>
                                                 </div>
