@@ -11,6 +11,7 @@ use App\Models\TransactionRow;
 use Carbon\Carbon;
 use Log;
 use DB;
+use App;
 class TransactionController extends Controller
 {
     public function postAddTransaction(Request $request)
@@ -24,6 +25,9 @@ class TransactionController extends Controller
             $brandId = Auth::user()->brandId;
 
         $balanceInput = $request['balanceInput'];
+        $account=null;
+        $toAccount=null;
+        $fromAccount=null;
         if(!strcmp($balanceInput,"cash") || !strcmp($balanceInput,"custodyCash") || !strcmp($balanceInput,"cashDollar") || !strcmp($balanceInput,"check") ||!strcmp($balanceInput,"visa"))
         {
             $account = Account::where([['type','=',$balanceInput],['brandId','=',$brandId]])->first();
@@ -36,19 +40,74 @@ class TransactionController extends Controller
                 $account->save();
             }
         }
+        elseif(!strcmp($balanceInput,"bankToBank"))
+        {
+            $fromAccount = Account::where('id', $request['fromBank'])->first();
+            $toAccount = Account::where('id', $request['toBank'])->first();
+        }
         else
             $account = Account::where('id','=',$balanceInput)->first();
 
         //now i have the account or created it. Just create the transaction and increment the account.
-        $transaction = new Transaction();
-        DB::transaction(function () use($balanceInput, $transaction, $account, $request,$brandId){
+        $transaction=null;
+        $fromTransaction=null;
+        $toTransaction=null;
+        if(!strcmp($balanceInput,"bankToBank"))
+        {
+            $fromTransaction = new Transaction();
+            $toTransaction = new Transaction();
+        }
+        else
+            $transaction = new Transaction();
+
+        DB::transaction(function () use($balanceInput, $transaction, $account, $request,$brandId,$fromTransaction,$toTransaction,$fromAccount,$toAccount){
+            if(!strcmp($balanceInput,"bankToBank"))
+            {
+                if(($fromTransaction===null || $toTransaction===null || $fromAccount===null ||$toAccount===null))
+                {
+                    Log::error('Null attributes for bank to bank transaction.');
+                    return;
+                }
+            }                
+            else
+            {
+                if($account === null || $transaction === null)
+                {
+                    Log::error('Null attributes for transaction.');
+                    return;
+                }               
+            }
+            
             if(!strcmp($balanceInput,"check"))
                 $transaction->init($account->id, Auth::user()->id, $request['typeInput'], $request['valueInput'], $request['dateInput'], $request['checkIsFromBankInput'], $request['checkNumberInput'], $request['checkValidityDateInput'], false,false,null,null,$request['noteInput'], $request['clientNameInput'], $brandId);
+            elseif(!strcmp($balanceInput,"bankToBank"))
+            {
+                $fromTransaction->init($fromAccount->id, Auth::user()->id, "sub", $request['valueInput'], $request['dateInput'], null, null,null ,null,null,null,null,$request['noteInput'], $request['clientNameInput'], $brandId);
+                $toTransaction->init($toAccount->id, Auth::user()->id, "add", $request['valueInput'], $request['dateInput'], null, null,null ,null,null,null,null,$request['noteInput'], $request['clientNameInput'], $brandId);
+            }
             else
                 $transaction->init($account->id, Auth::user()->id, $request['typeInput'], $request['valueInput'], $request['dateInput'], null, null,null ,null,null,null,null,$request['noteInput'], $request['clientNameInput'], $brandId);
-        
-            $transSaved = $transaction->save();
-            if($transSaved)
+            
+            $transSaved=0;
+            $fromTransSaved=0;
+            $toTransSaved=0;
+
+            if(!strcmp($balanceInput,"bankToBank"))
+            {
+                $fromTransSaved = $fromTransaction->save();
+                $toTransSaved = $toTransaction->save();
+            }
+            else
+                $transSaved = $transaction->save();
+
+            if($fromTransSaved && $toTransSaved)
+            {
+                $fromAccount->balance = $fromAccount->balance - $fromTransaction->value;
+                $toAccount->balance = $toAccount->balance + $toTransaction->value;
+                $fromAccount->save();
+                $toAccount->save();
+            }
+            elseif($transSaved)
             {
                 if(!strcmp($transaction->type,"add"))
                     $account->balance = $account->balance + $transaction->value;

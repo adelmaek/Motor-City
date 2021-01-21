@@ -35,6 +35,7 @@
                                         {{-- <option value="custodyCash">Custody cash</option> --}}
                                         <option value="check">Check</option>
                                         <option value="visa">Visa</option>
+                                        <option value="bankToBank">Bank to bank</option>
                                         @foreach ($bankAccounts as $bankAccount)
                                             <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id', $bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>
                                         @endforeach
@@ -89,6 +90,30 @@
                                 <div class="form-group">
                                     <label for="dateInput">Validity Date</label>
                                     <input type="date" class="form-control" id="checkValidityDateInput" name="checkValidityDateInput" style="height: 42px;border: 2px solid black;" >  
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" id="bankToBankSpecialInput">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="checkIsFromBankInput">Form bank</label>
+                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="fromBank" name="fromBank" >
+                                        <option value="" disabled selected>From bank</option>
+                                        @foreach ($bankAccounts as $bankAccount)
+                                            <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id', $bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>
+                                        @endforeach
+                                    </select>
+                                  </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="checkIsFromBankInput">To bank</label>
+                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="toBank" name="toBank" >
+                                        <option value="" disabled selected>To bank</option>
+                                        @foreach ($bankAccounts as $bankAccount)
+                                            <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id', $bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -194,6 +219,11 @@
                 $('#checkSpecialInput').show();
             else
                 $('#checkSpecialInput').hide();
+
+            if(!selectedBalance.localeCompare("bankToBank"))
+                $('#bankToBankSpecialInput').show();
+            else
+                $('#bankToBankSpecialInput').hide();
         });
     });
 </script>
