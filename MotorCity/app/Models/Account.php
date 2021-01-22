@@ -30,8 +30,9 @@ class Account extends Model
         $user = auth()->user();
         if(!$user)
             return Account::where('type',"bank")->get();
-        if($user->admin == 0)
-            $bankAccounts = Account::where('brandID',$user->brandId)->where('type',"bank")->get();
+        if($user->admin == 0) //make bank accounts brandless
+            $bankAccounts = Account::where('type',"bank")->get();
+            // $bankAccounts = Account::where('brandID',$user->brandId)->where('type',"bank")->get();
         else
             $bankAccounts = Account::where('type',"bank")->get();
         

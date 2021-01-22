@@ -43,3 +43,5 @@ Route::post('/queryBankAccountTransaction/{accountId}',[App\Http\Controllers\Tra
 Route::get('/deleteTransaction/{transactionId}',[App\Http\Controllers\TransactionController::class, 'getDeleteTransaction'])->name('deleteTransaction')->middleware('auth');
 Route::post('/settleCheck/{transactionId}',[App\Http\Controllers\TransactionController::class, 'postSettleCheck'])->name('settleCheck')->middleware('auth');
 Route::get('/confirmSettling/{transactionId}',[App\Http\Controllers\TransactionController::class, 'getConfirmCheckSettling'])->name('confirmSettling')->middleware('auth');
+Route::post('/editDescription/{transactionId}',[App\Http\Controllers\TransactionController::class, 'postEditDescription'])->name('editDescription')->middleware('auth');
+Route::post('/editClientName/{transactionId}',[App\Http\Controllers\TransactionController::class, 'postEditClientName'])->name('editClientName')->middleware('auth');

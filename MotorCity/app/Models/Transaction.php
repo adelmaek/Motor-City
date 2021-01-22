@@ -106,18 +106,18 @@ class Transaction extends Model
         return $transactions;
     }
 
-    public static function getTransactionOfAccount ( $accountId, $fromDate=null, $toDate=null)
+    public static function getTransactionOfAccount ( $accountId, $brandId, $fromDate=null, $toDate=null)
     {
         $transactions = [];
-      
+        // Log::info('getTransactionOfAccount', ['accountId' => $accountId, "brandId"=>$brandId,"fromDate"=>$fromDate,"toDate"=>$toDate]);
         if($fromDate === null && $toDate === null)
-            $transactions = Transaction::where('accountId',$accountId)->orderBy('date','Asc')->get();
+            $transactions = Transaction::where([['accountId',$accountId],['brandId',$brandId]])->orderBy('date','Asc')->get();
         else if($fromDate != null && $toDate === null)
-            $transactions = Transaction::where('accountId',$accountId)->whereDate('date','>=',$fromDate)->orderBy('date','Asc')->get();
+            $transactions = Transaction::where([['accountId',$accountId],['brandId',$brandId]])->whereDate('date','>=',$fromDate)->orderBy('date','Asc')->get();
         else if ($fromDate === null && $toDate != null)
-            $transactions = Transaction::where('accountId',$accountId)->whereDate('date','<=',$toDate)->orderBy('date','Asc')->get();
+            $transactions = Transaction::where([['accountId',$accountId],['brandId',$brandId]])->whereDate('date','<=',$toDate)->orderBy('date','Asc')->get();
         else
-            $transactions = Transaction::where('accountId',$accountId)->whereDate('date','>=',$fromDate)->whereDate('date','<=', $toDate)->orderBy('date','Asc')->get();
+            $transactions = Transaction::where([['accountId',$accountId],['brandId',$brandId]])->whereDate('date','>=',$fromDate)->whereDate('date','<=', $toDate)->orderBy('date','Asc')->get();
         
         return $transactions;
     }
@@ -137,22 +137,22 @@ class Transaction extends Model
     }
     public static function getBrandCurrentBanksBalanceAtDate($brandId,  $date)
     {
-        $accounts = Account::where([['type','=','bank'], ['brandID','=',$brandId]])->get();
-        Log::debug($accounts);
+        $accounts = Account::where([['type','=','bank']])->get();
+        // Log::info("getBrandCurrentBanksBalanceAtDate",["brandId"=>$brandId,"date"=>$date,"banks"=>$accounts]);
         if(empty($accounts))
             return 0;
         $banksBalance = 0;
         foreach($accounts as $account)
         {
-            $transaction = Transaction::where('accountId',$account->id)->whereDate('date','<=',$date)->orderBy('date','Desc')->first();
-
+            $transaction = Transaction::where([['accountId',$account->id],['brandId',$brandId]])->whereDate('date','<=',$date)->orderBy('date','Desc')->first();
+            // Log::info("getBrandCurrentBanksBalanceAtDate",["brandId"=>$brandId,"date"=>$date,"banks"=>$accounts,"transactions"=>$transaction]);
             if(!$transaction)
             {
                 $banksBalance = $banksBalance + $account->initialBalance;
                 continue;
             }
             else
-                $transaction = Transaction::where( [['accountId','=',$account->id]])->whereDate('date','=',$transaction->date)->orderBy('id','Desc')->first();
+                $transaction = Transaction::where( [['accountId','=',$account->id],['brandId',$brandId]])->whereDate('date','=',$transaction->date)->orderBy('id','Desc')->first();
 
             $banksBalance = $banksBalance + $transaction->currentBalance;
         }

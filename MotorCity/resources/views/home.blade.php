@@ -192,13 +192,39 @@
                                     <td style="text-align:center">Withdrawal</td>
                                 @endif
                                 <td style="text-align:center">{{number_format($trans->value)}}</td> 
-                                <td style="text-align:center">{{$trans->description}}</td>
-                                <td style="text-align:center">{{$trans->clientName}}</td>
+                                <td style="text-align:center" onclick="editDescription({{$trans->id}});">{{$trans->description}}</td>
+                                <td style="text-align:center"onclick="editClientName({{$trans->id}});">{{$trans->clientName}}</td>
                                 <td style="text-align:center">
                                     <a class="btn btn-danger delete-confirm" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('deleteTransaction',[$trans->id])}}" role="button">Delete</a>
                                 </td>
                             </tr>
                         @endforeach
+                            <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered " role="document">
+                                    <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="{{ url('/') }}" method="post" id="modalForm">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="editInput">Edit here</label>
+                                                        <textarea class="form-control" id="editInput" name="editInput" rows="2" style="border: 2px solid black;" required></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <input type="submit" name="submit" class="btn btn-dark btn-md" value="Edit">
+                                            <input type="hidden" name="_token" value="{{Session::token()}}">
+                                        </form>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
                         </tbody>
                     </table>
                 </div>
@@ -245,7 +271,7 @@
 
         });
         $(' .buttons-print,.buttons-excel').addClass('btn btn-primary mr-1');
-    </script>
+</script>
 <script>
     $('#transactionsTable').DataTable({
         "displayLength": 5,
@@ -265,5 +291,17 @@
         "paging":         false
     });
     $(' .buttons-print,.buttons-excel').addClass('btn btn-primary mr-1');
+</script>
+<script>
+    function editDescription(transId){
+        $('#editModal').modal('toggle');
+        var path = $("#modalForm").attr('action')+ "/editDescription/" +transId;
+        $("#modalForm").attr('action', path );
+    };
+    function editClientName(transId){
+        $('#editModal').modal('toggle');
+        var path = $("#modalForm").attr('action')+ "/editClientName/" +transId;
+        $("#modalForm").attr('action', path );
+    };
 </script>
 @endsection

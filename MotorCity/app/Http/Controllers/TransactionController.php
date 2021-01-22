@@ -198,9 +198,7 @@ class TransactionController extends Controller
         $toDate = $request['toDateInput'];
         
         $transactions = [];
-        $transactions = Transaction::getTransactionOfAccount( $account->id, $fromDate, $toDate);
-
-        
+        $transactions = Transaction::getTransactionOfAccount( $account->id,$brandId, $fromDate, $toDate);
 
         return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType,'transactions'=>$transactions, 'brands'=>$brands, "todayDate"=>$todayDate, "bankAccounts"=>$bankAccounts, 'yesterday'=>$yesterday]);
     }
@@ -208,19 +206,27 @@ class TransactionController extends Controller
     public function getQueryBankAccountTransaction($accountId)
     {
         $yesterday = Carbon::yesterday()->toDateString();
-        $today = Carbon::yesterday()->toDateString();
+        $today = Carbon::today()->toDateString();
+        $brands = Brand::all();
         $transactions = [];
-        return view('transactions.queryBankAccountTransactions',['accountId'=>$accountId,'transactions'=>$transactions, 'yesterday'=>$yesterday, 'today'=>$today]);
+        return view('transactions.queryBankAccountTransactions',['brands'=>$brands,'accountId'=>$accountId,'transactions'=>$transactions, 'yesterday'=>$yesterday, 'today'=>$today]);
     }
     public function getBankAccountTransaction($accountId, Request $request)
     {
         $fromDate = $request['fromDateInput'];
         $toDate = $request['toDateInput'];
         $yesterday = Carbon::yesterday()->toDateString();
-        $today = Carbon::yesterday()->toDateString();
+        $today = Carbon::today()->toDateString();
+        $brands = Brand::all();
+        $brandId = 0; //just intialization
+        if($request['brandIdInput'] != null)
+            $brandId = $request['brandIdInput'];
+        else
+            $brandId = Auth::user()->brandId;
+        // Log::debug($brandId);
         $transactions = [];
-        $transactions = Transaction::getTransactionOfAccount( $accountId, $fromDate, $toDate);
-        return view('transactions.queryBankAccountTransactions',['accountId'=>$accountId,'transactions'=>$transactions,'yesterday'=>$yesterday, 'today'=>$today]);
+        $transactions = Transaction::getTransactionOfAccount($accountId, $brandId, $fromDate, $toDate);
+        return view('transactions.queryBankAccountTransactions',['brands'=>$brands,'accountId'=>$accountId,'transactions'=>$transactions,'yesterday'=>$yesterday, 'today'=>$today]);
     }
 
     public function getDeleteTransaction($transactionId)
@@ -276,6 +282,20 @@ class TransactionController extends Controller
             $checksAccount->save();
         }, 5);
 
+        return redirect()->back();
+    }
+    public function postEditDescription(Request $request, $transactionId)
+    {
+        $transaction = Transaction::where('id', $transactionId)->first();
+        $transaction->description = $request['editInput'];
+        $transaction->save();
+        return redirect()->back();
+    }
+    public function postEditClientName(Request $request, $transactionId)
+    {
+        $transaction = Transaction::where('id', $transactionId)->first();
+        $transaction->clientName = $request['editInput'];
+        $transaction->save();
         return redirect()->back();
     }
 }
