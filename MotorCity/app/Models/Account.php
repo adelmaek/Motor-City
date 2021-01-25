@@ -15,7 +15,7 @@ class Account extends Model
         'balance',
         'initialBalance'
     ];
-    public function init($name = null, $type = null, $initialBalance = null, $bankID = null, $brandID = null)
+    public function init($name = null, $type = null, $initialBalance = null, $bankID = null, $brandID = null, $bankAccountId=null)
     {
         $this->name = $name;
         $this->type = $type;
@@ -24,7 +24,10 @@ class Account extends Model
         if($bankID != null) // This to be used if i added a general account addition. I mean that the account shouldn't be belonging to bank. (Possible enhancement)
             $this->bankID = $bankID;
         $this->brandID = $brandID;
+        if($bankAccountId != null)
+            $this->bankAccountId = $bankAccountId;
     }
+
     public static function getBankAccounts()
     {
         $user = auth()->user();
@@ -37,5 +40,18 @@ class Account extends Model
             $bankAccounts = Account::where('type',"bank")->get();
         
         return $bankAccounts;
+    }
+
+    public static function getPosAccounts()
+    {
+        $user = auth()->user();
+        if(!$user)
+            return Account::where('type',"visa")->get();
+        if($user->admin == 0) 
+            $posAccounts = Account::where('brandID',$user->brandId)->where('type',"visa")->get();
+        else
+            $posAccounts = Account::where('type',"visa")->get();
+        
+        return $posAccounts;
     }
 }

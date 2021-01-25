@@ -17,7 +17,8 @@ use Carbon\Carbon;
 */
 view()->composer(['layouts/app'], function ($view) {
     $bankAccounts = Account::getBankAccounts();
-    $view->with(['bankAccounts'=>$bankAccounts]);
+    $posAccounts = Account::getPosAccounts();
+    $view->with(['bankAccounts'=>$bankAccounts,'posAccounts'=>$posAccounts]);
 });
 
 // Route::get('/', function () {
@@ -45,3 +46,8 @@ Route::post('/settleCheck/{transactionId}',[App\Http\Controllers\TransactionCont
 Route::get('/confirmSettling/{transactionId}',[App\Http\Controllers\TransactionController::class, 'getConfirmCheckSettling'])->name('confirmSettling')->middleware('auth');
 Route::post('/editDescription/{transactionId}',[App\Http\Controllers\TransactionController::class, 'postEditDescription'])->name('editDescription')->middleware('auth');
 Route::post('/editClientName/{transactionId}',[App\Http\Controllers\TransactionController::class, 'postEditClientName'])->name('editClientName')->middleware('auth');
+Route::get('/queryPosAccountTransaction/{accountId}',[App\Http\Controllers\TransactionController::class, 'getQueryPosAccountTransaction'])->name('queryPosAccountTransaction')->middleware('auth');
+Route::post('/queryPosAccountTransaction/{accountId}',[App\Http\Controllers\TransactionController::class, 'postQueryPosAccountTransaction'])->name('queryPosAccountTransaction')->middleware('auth');
+Route::post('/settlePosTransactions',[App\Http\Controllers\TransactionController::class, 'postSettlePosTransactions'])->name('settlePosTransactions')->middleware('auth');
+Route::post('/confirmSettlingPos/{transactionId}',[App\Http\Controllers\TransactionController::class, 'postConfirmSettlingPos'])->name('confirmSettlingPos')->middleware('auth');
+

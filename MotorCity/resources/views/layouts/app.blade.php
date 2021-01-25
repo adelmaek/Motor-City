@@ -69,7 +69,7 @@
                                 <div class="dropdown-menu animated flipInY">
                                     <a class="dropdown-item" href="{{route('queryBrandAccountTransaction',["cash"])}}">Cash</a>
                                     <a class="dropdown-item" href="{{route('queryBrandAccountTransaction',["cashDollar"])}}">Cash $</a>
-                                    <a class="dropdown-item" href="{{route('queryBrandAccountTransaction',["custodyCash"])}}">Custody Cash</a>
+                                    {{-- <a class="dropdown-item" href="{{route('queryBrandAccountTransaction',["custodyCash"])}}">Custody Cash</a> --}}
                                 </div>
                             </div>
                         </li>
@@ -86,8 +86,14 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{route('queryBrandAccountTransaction',["check"])}}">Checks</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{route('queryBrandAccountTransaction',["visa"])}}">Visa</a>
+                        <li class="nav-item dropdown">
+                            {{-- <a class="nav-link" href="{{route('queryBrandAccountTransaction',["visa"])}}">POS</a> --}}
+                            <a href="javascript:void(0)" class="nav-link dropdown-toggle u-dropdown link hide-menu" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">POS Accounts</a>
+                            <div class="dropdown-menu animated flipInY">
+                                @foreach ($posAccounts as $posAccount)
+                                    <a class="dropdown-item" href="{{route('queryPosAccountTransaction',[$posAccount->id])}}">{{$posAccount->name}}</a>
+                                @endforeach
+                            </div>
                         </li>
                     </ul>
                     @endguest

@@ -34,10 +34,13 @@
                                         <option value="cashDollar">Cash $</option>
                                         {{-- <option value="custodyCash">Custody cash</option> --}}
                                         <option value="check">Check</option>
-                                        <option value="visa">Visa</option>
+                                        <option value="visa">POS</option>
                                         <option value="bankToBank">Bank to bank</option>
                                         @foreach ($bankAccounts as $bankAccount)
                                             <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id', $bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>
+                                        @endforeach
+                                        @foreach ($posAccounts as $posAccount)
+                                            <option value="{{$posAccount->id}}">{{$posAccount->name}}</option>
                                         @endforeach
                                     </select>
                                   </div>
@@ -199,36 +202,36 @@
                                 </td>
                             </tr>
                         @endforeach
-                            <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered " role="document">
-                                    <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <form action="{{ url('/') }}" method="post" id="modalForm">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="form-group">
-                                                        <label for="editInput">Edit here</label>
-                                                        <textarea class="form-control" id="editInput" name="editInput" rows="2" style="border: 2px solid black;" required></textarea>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <input type="submit" name="submit" class="btn btn-dark btn-md" value="Edit">
-                                            <input type="hidden" name="_token" value="{{Session::token()}}">
-                                        </form>
-                                    </div>
-                                    </div>
-                                </div>
-                            </div>
                         </tbody>
                     </table>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered " role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Edit here</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form action="{{ url('/') }}" method="post" id="modalForm">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="editInput">Edit here</label>
+                            <textarea class="form-control" id="editInput" name="editInput" rows="2" style="border: 2px solid black;" required></textarea>
+                        </div>
+                    </div>
+                </div>
+                <input type="submit" name="submit" class="btn btn-dark btn-md" value="Edit">
+                <input type="hidden" name="_token" value="{{Session::token()}}">
+            </form>
+        </div>
         </div>
     </div>
 </div>

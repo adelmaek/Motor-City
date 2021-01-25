@@ -135,7 +135,7 @@
                                 <div class="modal-dialog modal-dialog-centered " role="document">
                                     <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                        <h5 class="modal-title" id="exampleModalLabel">Settle</h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                         </button>
@@ -160,7 +160,7 @@
                                                                 <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id',$bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>
                                                             @endforeach
                                                         </select>
-                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <input type="submit" name="submit" class="btn btn-dark btn-md" value="Settle">

@@ -28,7 +28,7 @@ class TransactionController extends Controller
         $account=null;
         $toAccount=null;
         $fromAccount=null;
-        if(!strcmp($balanceInput,"cash") || !strcmp($balanceInput,"custodyCash") || !strcmp($balanceInput,"cashDollar") || !strcmp($balanceInput,"check") ||!strcmp($balanceInput,"visa"))
+        if(!strcmp($balanceInput,"cash") || !strcmp($balanceInput,"custodyCash") || !strcmp($balanceInput,"cashDollar") || !strcmp($balanceInput,"check"))
         {
             $account = Account::where([['type','=',$balanceInput],['brandId','=',$brandId]])->first();
             if($account === null)
@@ -57,7 +57,7 @@ class TransactionController extends Controller
             $fromTransaction = new Transaction();
             $toTransaction = new Transaction();
         }
-        else
+        else //Bank transaction or POS transaction
             $transaction = new Transaction();
 
         DB::transaction(function () use($balanceInput, $transaction, $account, $request,$brandId,$fromTransaction,$toTransaction,$fromAccount,$toAccount){
@@ -296,6 +296,123 @@ class TransactionController extends Controller
         $transaction = Transaction::where('id', $transactionId)->first();
         $transaction->clientName = $request['editInput'];
         $transaction->save();
+        return redirect()->back();
+    }
+
+    public function getQueryPosAccountTransaction($accountId)
+    {
+        $yesterday = Carbon::yesterday()->toDateString();
+        $today = Carbon::today()->toDateString();
+        $brands = Brand::all();
+        $bankAccounts = Account::getBankAccounts();
+        $transactions = [];
+        return view('transactions.queryPosAccountTransactions',['bankAccounts'=>$bankAccounts,'brands'=>$brands,'accountId'=>$accountId,'transactions'=>$transactions, 'yesterday'=>$yesterday, 'today'=>$today]);
+    }
+
+    public function postQueryPosAccountTransaction(Request $request, $accountId)
+    {
+        // Log::info('postQueryPosAccountTransaction',['request'=>$request,'accountId'=>$accountId]);
+        $fromDate = $request['fromDateInput'];
+        $toDate = $request['toDateInput'];
+        $yesterday = Carbon::yesterday()->toDateString();
+        $today = Carbon::today()->toDateString();
+        $brands = Brand::all();
+        $bankAccounts = Account::getBankAccounts();
+
+        $account = Account::where('id', $accountId)->first();
+        // $brandId = 0;
+        // if($request['brandIdInput'] != null)
+        //     $brandId = $request['brandIdInput'];
+        // else
+        //     $brandId = Auth::user()->brandId;
+
+        $transactions = [];
+        $transactions = Transaction::getTransactionOfAccount($accountId, $account->brandID, $fromDate, $toDate);
+        
+        return view('transactions.queryPosAccountTransactions',['bankAccounts'=>$bankAccounts,'brands'=>$brands,'accountId'=>$accountId,'transactions'=>$transactions, 'yesterday'=>$yesterday, 'today'=>$today]);
+    }
+
+    public function postSettlePosTransactions(Request $request)
+    {
+        $totalValue = 0;
+        $transaction = null;
+        foreach($request['settled'] as $transId)
+        {
+            $transaction = Transaction::where('id',$transId)->first();
+            $transaction->settled = true;
+            $transactionSaved = $transaction->save();
+            if($transactionSaved)
+            {
+                if(!strcmp($transaction->type,"add"))
+                    $totalValue += $transaction->value;
+                else
+                    $totalValue -= $transaction->value;
+            }
+        }
+
+        if($totalValue != 0 && $transaction != null)
+        {
+            $settlingTransaction = new Transaction();
+            $today = Carbon::today()->toDateString();
+            $account = Account::where('id', $transaction->accountId)->first();
+            $account->balance -= $totalValue;
+            $description = "A settling transaction";
+            $clientName = Auth::user()->name;
+            DB::transaction(function () use($settlingTransaction, $transaction, $totalValue, $today, $account, $description, $clientName) {
+                $settlingTransaction->init($account->id, Auth::user()->id, "sub", $totalValue, $today, null, null, null, true, null ,null,null,$description, $clientName, $account->brandID);
+                $settlingTransaction->save();
+                $account->save();
+            }, 5);
+        }
+        return redirect()->back();
+    }
+
+    public function postConfirmSettlingPos(Request $request, $transactionId)
+    {
+        $transaction = Transaction::where('id', $transactionId)->first();
+
+        $brandId = $transaction->brandId;
+        $balanceInput = "posCommission";
+        $commissionAccount = Account::where([['type','=',$balanceInput],['brandId','=',$brandId]])->first();
+        if($commissionAccount === null)
+        {
+            $brand = Brand::where('id','=',$brandId)->first();
+            $name = $brand->name . ":" . $balanceInput;
+            $commissionAccount = new Account();
+            $commissionAccount->init($name, $balanceInput, 0, null, $brandId);
+            $commissionAccount->save();
+        }
+
+        $posAccount = Account::where('id', $transaction->accountId)->first();
+
+        $bankValue = $request["valueInput"];
+        $bankId = $request["bankIdInput"];
+        $bankAccount = Account::where('id', $bankId)->first();
+        $commissionValue = $transaction->value - $bankValue;
+
+
+        $description = "Settling POS " .  $posAccount->name;
+
+        $bankTransaction = new Transaction();
+        $commissionTransaction = new Transaction();
+        $transaction->confirmSettling = true;
+        $bankAccount->balance += $bankValue;
+        $commissionAccount->balance += $commissionValue;
+
+        $today = Carbon::today()->toDateString();
+
+
+
+        DB::transaction(function () use($transaction,$bankTransaction, $commissionTransaction, $bankAccount,$commissionAccount, $bankValue, $commissionValue, $today, $description) {
+            $bankTransaction->init($bankAccount->id, Auth::user()->id, "add", $bankValue, $today, null, null, null, null, null ,null,null,$description, Auth::user()->name, $transaction->brandId);
+            $commissionTransaction->init($commissionAccount->id, Auth::user()->id, "add", $commissionValue, $today, null, null, null, null, null ,null,null,$description, Auth::user()->name, $commissionAccount->brandID);
+            $bankTransaction->save();
+            $commissionTransaction->save();
+            $transaction->save();
+            $commissionAccount->save();
+            $bankAccount->save();
+        }, 5);
+
         return redirect()->back();
     }
 }

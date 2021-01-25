@@ -20,7 +20,8 @@ class CreateAccountsTable extends Migration
             $table->double("initialBalance",40,3);
             $table->string('type');
             $table->bigInteger('bankID')->nullable();
-            $table->bigInteger('brandID');
+            $table->bigInteger('bankAccountId')->nullable();
+            $table->bigInteger('brandID')->nullable(); //bank accounts are brandless
         });
     }
 
