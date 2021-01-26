@@ -108,7 +108,7 @@
                                         @endif
                                         @if($trans->settled)
                                             @if(!$trans->confirmSettling)
-                                                @if(\Carbon\Carbon::parse($trans->checkSettlingDate)->gt(\Carbon\Carbon::parse($todayDate)))
+                                                @if(\Carbon\Carbon::parse($trans->checkSettlingDate)->gt(\Carbon\Carbon::parse($todayDate)) || Auth::user()->admin)
                                                     <a class="btn btn-info disabled"  style="height:25px;padding: 3px 8px;padding-bottom: 3px;" role="button">Confirm Settling</a>
                                                 @else
                                                     <a class="btn btn-info " style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('confirmSettling',[$trans->id])}}" role="button" >Confirm Settling</a>

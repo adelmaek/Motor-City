@@ -95,7 +95,7 @@
                                         <td style="text-align:center">{{number_format($trans->currentBalance)}}</td>
                                         <td style="text-align:center">{{$trans->description}}</td>
                                         <td style="text-align:center">{{$trans->clientName}}</td>
-                                        @if(\Carbon\Carbon::parse($trans->date)->gte(\Carbon\Carbon::parse($yesterday)))
+                                        @if(\Carbon\Carbon::parse($trans->date)->gte(\Carbon\Carbon::parse($yesterday)) || Auth::user()->admin)
                                             <td style="text-align:center">
                                                 <a class="btn btn-danger delete-confirm" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('deleteTransaction',[$trans->id])}}" role="button">Delete</a>
                                             </td>
