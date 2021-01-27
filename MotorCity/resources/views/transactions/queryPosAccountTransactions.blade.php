@@ -72,9 +72,9 @@
                                                     <input type="checkbox"  class="form-check-input" id="{{$trans->id}}" name="settled[]"  placeholder="Value" value="{{$trans->id}}" disabled >
                                                 @else
                                                     @if(!$trans->confirmSettling)
-                                                        <a class="btn btn-danger" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" onclick="confirmSettling({{$trans->id}})"  role="button">Confirm</a>
+                                                        <a class="btn btn-success active" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" onclick="confirmSettling({{$trans->id}})"  role="button">Confirm</a>
                                                     @else
-                                                        <a class="btn btn-danger disabled" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" onclick="confirmSettling({{$trans->id}})"  role="button" >Confirm</a>
+                                                        <a class="btn btn-info disabled" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" onclick="confirmSettling({{$trans->id}})"  role="button" >Confirm</a>
                                                     @endif
                                                  @endif
                                             @else
