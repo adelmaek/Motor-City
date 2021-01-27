@@ -19,7 +19,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="fromDateInput">To Date</label>
-                                    <input type="date" class="form-control" id="toDateInput" name="toDateInput" style="height: 42px;" required>     
+                                    <input type="date" class="form-control" id="toDateInput" name="toDateInput" style="height: 42px;" value={{$today}} required>     
                                   </div>
                             </div>
                             @if (Auth::user()->admin)

@@ -135,7 +135,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                {{-- <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="bankIdInput">Settling Bank</label>
@@ -147,7 +147,7 @@
                             </select>
                         </div>
                     </div>
-                </div>
+                </div> --}}
                 <input type="submit" name="submit" class="btn btn-dark btn-md" value="Settle">
                 <input type="hidden" name="_token" value="{{Session::token()}}">
             </form>

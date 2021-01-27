@@ -127,6 +127,7 @@ class TransactionController extends Controller
     public function getQueryBrandAllTransactions()
     {
         $brands = Brand::all();
+        $today = Carbon::today()->toDateString();
         return view('transactions.queryBrandAllTransactions',["transactionsRows"=>[],
                                                             "cashBalance"=>0,
                                                             "cashDollarBalance"=>0,
@@ -134,11 +135,13 @@ class TransactionController extends Controller
                                                             "checKBalance"=>0,
                                                             "visaBalance"=>0,
                                                             "banksBalance"=>0,
-                                                            "brands"=>$brands]);
+                                                            "brands"=>$brands,
+                                                            "today"=>$today]);
     }
 
     public function getBrandAllTransactions(Request $request)
     {
+        $today = Carbon::today()->toDateString();
         $brands = Brand::all();
         $brandId = 0; //just intialization
         if($request['brandIdInput'] === null) //if a none admin user
@@ -166,7 +169,8 @@ class TransactionController extends Controller
                                                             "checKBalance"=>$brandCheckBalanceAtToDate,
                                                             "visaBalance"=>$brandVisaBalanceAtToDate,
                                                             "banksBalance"=>$brandBanksBalanceAtToDate,
-                                                            "brands"=>$brands]);
+                                                            "brands"=>$brands,
+                                                            "today"=>$today]);
     }
 
     public function getQueryAccountTransaction($accountType)
@@ -386,8 +390,8 @@ class TransactionController extends Controller
         $posAccount = Account::where('id', $transaction->accountId)->first();
 
         $bankValue = $request["valueInput"];
-        $bankId = $request["bankIdInput"];
-        $bankAccount = Account::where('id', $bankId)->first();
+        // $bankId = $request["bankIdInput"];
+        $bankAccount = Account::where('id', Account::where('id', $transaction->accountId)->first()->bankAccountId)->first();
         $commissionValue = $transaction->value - $bankValue;
 
 

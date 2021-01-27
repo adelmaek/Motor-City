@@ -34,7 +34,7 @@
                                         <option value="cashDollar">Cash $</option>
                                         {{-- <option value="custodyCash">Custody cash</option> --}}
                                         <option value="check">Check</option>
-                                        <option value="visa">POS</option>
+                                        {{-- <option value="visa">POS</option> --}}
                                         <option value="bankToBank">Bank to bank</option>
                                         @foreach ($bankAccounts as $bankAccount)
                                             <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id', $bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>

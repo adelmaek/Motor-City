@@ -120,6 +120,8 @@
                 $("#bankNameInput").prop('required',true);
                 $('#posDiv').hide();
                 $('#brandDiv').hide();
+                $("#posBankAccountInput").prop('required',false);
+                $('#brandInput').prop('required',false);
             }
             else if (!selectedAccountType.localeCompare("visa"))
             {
@@ -128,6 +130,7 @@
                 $("#posBankAccountInput").prop('required',true);
                 $('#brandDiv').show();
                 $('#brandInput').prop('required',true);
+                $("#bankNameInput").prop('required',false);
             }               
         });
     });

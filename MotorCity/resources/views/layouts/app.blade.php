@@ -93,6 +93,7 @@
                                 @foreach ($posAccounts as $posAccount)
                                     <a class="dropdown-item" href="{{route('queryPosAccountTransaction',[$posAccount->id])}}">{{$posAccount->name}}</a>
                                 @endforeach
+                                <a class="dropdown-item" href="{{route('queryBrandAccountTransaction',["posCommission"])}}">Commission</a>
                             </div>
                         </li>
                     </ul>
