@@ -101,14 +101,14 @@
                                     <td style="text-align:center">
                                         @if(!$trans->settled)
                                             @if(\Carbon\Carbon::parse($trans->checkValidityDate)->gt(\Carbon\Carbon::parse($todayDate)))
-                                                <a class="btn btn-info disabled"  style="height:25px;padding: 3px 8px;padding-bottom: 3px;" role="button">Settle</a>
+                                            <a class="btn btn-info disabled"  style="height:25px;padding: 3px 8px;padding-bottom: 3px;" role="button">Settle</a>
                                             @else
                                                 <a class="btn btn-info " id="modalButton" data-item="{{$trans->id}}" data-toggle="modal" data-target="#settlingModal" style="height:25px;padding: 3px 8px;padding-bottom: 3px;"  role="button">Settle</a>
                                             @endif
                                         @endif
                                         @if($trans->settled)
                                             @if(!$trans->confirmSettling)
-                                                @if(\Carbon\Carbon::parse($trans->checkSettlingDate)->gt(\Carbon\Carbon::parse($todayDate)) || Auth::user()->admin)
+                                                @if(\Carbon\Carbon::parse($trans->checkSettlingDate)->gt(\Carbon\Carbon::parse($todayDate)) )
                                                     <a class="btn btn-info disabled"  style="height:25px;padding: 3px 8px;padding-bottom: 3px;" role="button">Confirm Settling</a>
                                                 @else
                                                     <a class="btn btn-info " style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('confirmSettling',[$trans->id])}}" role="button" >Confirm Settling</a>
@@ -120,7 +120,7 @@
                                         @endif
                                     </td>
                                 @endif
-                                @if(\Carbon\Carbon::parse($trans->date)->gte(\Carbon\Carbon::parse($yesterday)))
+                                @if(\Carbon\Carbon::parse($trans->date)->gte(\Carbon\Carbon::parse($yesterday))|| Auth::user()->admin)
                                     <td style="text-align:center">
                                         <a class="btn btn-danger delete-confirm " style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('deleteTransaction',[$trans->id])}}" role="button" >Delete</a>
                                     </td>

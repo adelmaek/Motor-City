@@ -58,7 +58,7 @@ class HomeController extends Controller
 
             $transaction->setAttribute('accountName',$accountName);
         }
-        $today = Carbon::today()->toDateString();
+        $today = Carbon::today('Egypt')->toDateString();
         $posAccounts = Account::getPosAccounts();
         return view('home',['posAccounts'=>$posAccounts,"banks"=>$banks, "bankAccounts"=>$bankAccounts, "brands"=>$brands, "currentUserAccounts"=>$currentUserAccounts, 'transactions'=>$transactions,'today'=>$today] );
     }

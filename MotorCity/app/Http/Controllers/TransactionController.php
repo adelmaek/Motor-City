@@ -127,7 +127,7 @@ class TransactionController extends Controller
     public function getQueryBrandAllTransactions()
     {
         $brands = Brand::all();
-        $today = Carbon::today()->toDateString();
+        $today = Carbon::today('Egypt')->toDateString();
         return view('transactions.queryBrandAllTransactions',["transactionsRows"=>[],
                                                             "cashBalance"=>0,
                                                             "cashDollarBalance"=>0,
@@ -141,7 +141,7 @@ class TransactionController extends Controller
 
     public function getBrandAllTransactions(Request $request)
     {
-        $today = Carbon::today()->toDateString();
+        $today = Carbon::today('Egypt')->toDateString();
         $brands = Brand::all();
         $brandId = 0; //just intialization
         if($request['brandIdInput'] === null) //if a none admin user
@@ -176,7 +176,7 @@ class TransactionController extends Controller
     public function getQueryAccountTransaction($accountType)
     {
         $yesterday = Carbon::yesterday()->toDateString();
-        $todayDate = Carbon::today()->toDateString();
+        $todayDate = Carbon::today('Egypt')->toDateString();
         $brands = Brand::all();
         $bankAccounts = Account::getBankAccounts();
         return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType, 'transactions'=>[], 'brands'=>$brands, "todayDate"=>$todayDate, "bankAccounts"=>$bankAccounts,'yesterday'=>$yesterday]);
@@ -186,7 +186,7 @@ class TransactionController extends Controller
     {
         $yesterday = Carbon::yesterday()->toDateString();
         $bankAccounts = Account::getBankAccounts();
-        $todayDate = Carbon::today()->toDateString();
+        $todayDate = Carbon::today('Egypt')->toDateString();
 
         $brands = Brand::all();
         $brandId = 0; //just intialization
@@ -210,7 +210,7 @@ class TransactionController extends Controller
     public function getQueryBankAccountTransaction($accountId)
     {
         $yesterday = Carbon::yesterday()->toDateString();
-        $today = Carbon::today()->toDateString();
+        $today = Carbon::today('Egypt')->toDateString();
         $brands = Brand::all();
         $transactions = [];
         return view('transactions.queryBankAccountTransactions',['brands'=>$brands,'accountId'=>$accountId,'transactions'=>$transactions, 'yesterday'=>$yesterday, 'today'=>$today]);
@@ -220,7 +220,7 @@ class TransactionController extends Controller
         $fromDate = $request['fromDateInput'];
         $toDate = $request['toDateInput'];
         $yesterday = Carbon::yesterday()->toDateString();
-        $today = Carbon::today()->toDateString();
+        $today = Carbon::today('Egypt')->toDateString();
         $brands = Brand::all();
         $brandId = 0; //just intialization
         if($request['brandIdInput'] != null)
@@ -306,7 +306,7 @@ class TransactionController extends Controller
     public function getQueryPosAccountTransaction($accountId)
     {
         $yesterday = Carbon::yesterday()->toDateString();
-        $today = Carbon::today()->toDateString();
+        $today = Carbon::today('Egypt')->toDateString();
         $brands = Brand::all();
         $bankAccounts = Account::getBankAccounts();
         $transactions = [];
@@ -319,7 +319,7 @@ class TransactionController extends Controller
         $fromDate = $request['fromDateInput'];
         $toDate = $request['toDateInput'];
         $yesterday = Carbon::yesterday()->toDateString();
-        $today = Carbon::today()->toDateString();
+        $today = Carbon::today('Egypt')->toDateString();
         $brands = Brand::all();
         $bankAccounts = Account::getBankAccounts();
 
@@ -357,7 +357,7 @@ class TransactionController extends Controller
         if($totalValue != 0 && $transaction != null)
         {
             $settlingTransaction = new Transaction();
-            $today = Carbon::today()->toDateString();
+            $today = Carbon::today('Egypt')->toDateString();
             $account = Account::where('id', $transaction->accountId)->first();
             $account->balance -= $totalValue;
             $description = "A settling transaction";
@@ -403,7 +403,7 @@ class TransactionController extends Controller
         $bankAccount->balance += $bankValue;
         $commissionAccount->balance += $commissionValue;
 
-        $today = Carbon::today()->toDateString();
+        $today = Carbon::today('Egypt')->toDateString();
 
 
 
