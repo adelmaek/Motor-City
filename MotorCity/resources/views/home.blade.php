@@ -14,7 +14,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="brandIdInput">Brand</label>
-                                    <select class="form-control" style="height: 42px;" id="brandIdInput" name="brandIdInput" required>
+                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="brandIdInput" name="brandIdInput"  required>
                                         <option value="" disabled selected>Choose brand</option>
                                         @foreach ($brands as $brand)
                                             <option value="{{$brand->id}}">{{$brand->name}}</option>
@@ -28,15 +28,19 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="balanceInput">Balance Name</label>
-                                    <select class="form-control balanceInput" style="height: 42px;" id="balanceInput" name="balanceInput" required>
+                                    <select class="form-control balanceInput" style="height: 42px;border: 2px solid black;" id="balanceInput" name="balanceInput" required>
                                         <option value="" disabled selected>Select Balance</option>
                                         <option value="cash">Cash</option>
                                         <option value="cashDollar">Cash $</option>
-                                        <option value="custodyCash">Custody cash</option>
+                                        {{-- <option value="custodyCash">Custody cash</option> --}}
                                         <option value="check">Check</option>
-                                        <option value="visa">Visa</option>
+                                        <option value="visa">POS</option>
+                                        <option value="bankToBank">Bank to bank</option>
                                         @foreach ($bankAccounts as $bankAccount)
-                                            <option value="{{$bankAccount->id}}">{{$bankAccount->name}}</option>
+                                            <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id', $bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>
+                                        @endforeach
+                                        @foreach ($posAccounts as $posAccount)
+                                            <option value="{{$posAccount->id}}">{{$posAccount->name}}</option>
                                         @endforeach
                                     </select>
                                   </div>
@@ -44,9 +48,9 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="typeInput">Type</label>
-                                    <select class="form-control" style="height: 42px;" id="typeInput" name="typeInput" required>
-                                        <option value="" disabled selected>Add/Withdraw</option>
-                                        <option value="add">Add</option>
+                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="typeInput" name="typeInput"  required>
+                                        {{-- <option value="" disabled selected>Add/Withdraw</option> --}}
+                                        <option value="add" selected>Add</option>
                                         <option value="sub">Withdraw</option>
                                     </select>
                                   </div>
@@ -56,21 +60,21 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="valueInput">Value</label>
-                                    <input type="number" step ="0.01" class="form-control" id="valueInput" name="valueInput" placeholder="Value" required style="min-width: 100px;" >
+                                    <input type="number" step ="0.01" class="form-control" id="valueInput" name="valueInput" placeholder="Value" required style="min-width: 100px;border: 2px solid black;" >
                                   </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="dateInput">Date</label>
-                                    <input type="date" class="form-control" id="dateInput" name="dateInput" style="height: 42px;" required>     
-                                  </div>
+                                    <input type="date" class="form-control" id="dateInput" name="dateInput" style="height: 42px;border: 2px solid black;" value="{{$today}}"  required>     
+                                </div>
                             </div>
                         </div>
-                        <div class="row" id="checkBanks">
-                            <div class="col-md-6">
+                        <div class="row" id="checkSpecialInput">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="checkIsFromBankInput">Check form bank</label>
-                                    <select class="form-control" style="height: 42px;" id="checkIsFromBankInput" name="checkIsFromBankInput" >
+                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="checkIsFromBankInput" name="checkIsFromBankInput" >
                                         <option value="" disabled selected>From bank</option>
                                         @foreach ($banks as $bank)
                                             <option value="{{$bank->id}}">{{$bank->name}}</option>
@@ -79,29 +83,54 @@
                                     </select>
                                   </div>
                             </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="checkNumberInput">Check number</label>
+                                    <input type="text" class="form-control" id="checkNumberInput" name="checkNumberInput" placeholder="Check Number"  style="min-width: 100px;border: 2px solid black;" >
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="dateInput">Validity Date</label>
+                                    <input type="date" class="form-control" id="checkValidityDateInput" name="checkValidityDateInput" style="height: 42px;border: 2px solid black;" >  
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" id="bankToBankSpecialInput">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="checkIsToBankInput">Check to bank account</label>
-                                    <select class="form-control" style="height: 42px;" id="checkIsToBankInput" name="checkIsToBankInput" >
-                                        <option value="" disabled selected>To bank account</option>
+                                    <label for="checkIsFromBankInput">Form bank</label>
+                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="fromBank" name="fromBank" >
+                                        <option value="" disabled selected>From bank</option>
                                         @foreach ($bankAccounts as $bankAccount)
-                                            <option value="{{$bankAccount->id}}">{{$bankAccount->name}}</option>
+                                            <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id', $bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>
                                         @endforeach
                                     </select>
                                   </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="checkIsFromBankInput">To bank</label>
+                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="toBank" name="toBank" >
+                                        <option value="" disabled selected>To bank</option>
+                                        @foreach ($bankAccounts as $bankAccount)
+                                            <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id', $bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-8">
                                 <div class="form-group">
                                     <label for="noteInput">Description</label>
-                                    <textarea class="form-control" id="noteInput" name="noteInput" rows="2" required></textarea>
+                                    <textarea class="form-control" id="noteInput" name="noteInput" rows="2" style="border: 2px solid black;" required></textarea>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="clientNameInput">Client Name</label>
-                                    <input type="text" class="form-control" id="clientNameInput" name="clientNameInput" rows="2" required>
+                                    <input type="text" class="form-control" id="clientNameInput" name="clientNameInput" style="border: 2px solid black;" rows="2" required>
                                 </div>
                             </div>
                         </div>
@@ -161,13 +190,13 @@
                             <tr>
                                 <td style="text-align:center">{{$trans->date}}</td>
                                 @if(!strcmp('add', $trans->type))
-                                    <td style="text-align:center">Deposition</td>
+                                    <td style="text-align:center">Deposite</td>
                                 @else
                                     <td style="text-align:center">Withdrawal</td>
                                 @endif
                                 <td style="text-align:center">{{number_format($trans->value)}}</td> 
-                                <td style="text-align:center">{{$trans->description}}</td>
-                                <td style="text-align:center">{{$trans->clientName}}</td>
+                                <td style="text-align:center" onclick="editDescription({{$trans->id}});">{{$trans->description}}</td>
+                                <td style="text-align:center"onclick="editClientName({{$trans->id}});">{{$trans->clientName}}</td>
                                 <td style="text-align:center">
                                     <a class="btn btn-danger delete-confirm" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('deleteTransaction',[$trans->id])}}" role="button">Delete</a>
                                 </td>
@@ -177,6 +206,32 @@
                     </table>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered " role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Edit here</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form action="{{ url('/') }}" method="post" id="modalForm">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="editInput">Edit here</label>
+                            <textarea class="form-control" id="editInput" name="editInput" rows="2" style="border: 2px solid black;" required></textarea>
+                        </div>
+                    </div>
+                </div>
+                <input type="submit" name="submit" class="btn btn-dark btn-md" value="Edit">
+                <input type="hidden" name="_token" value="{{Session::token()}}">
+            </form>
+        </div>
         </div>
     </div>
 </div>
@@ -190,9 +245,14 @@
         $("select.balanceInput").change(function(){
             var selectedBalance = $(this).children("option:selected").val();
             if(!selectedBalance.localeCompare("check"))
-                $('#checkBanks').show();
+                $('#checkSpecialInput').show();
             else
-                $('#checkBanks').hide();
+                $('#checkSpecialInput').hide();
+
+            if(!selectedBalance.localeCompare("bankToBank"))
+                $('#bankToBankSpecialInput').show();
+            else
+                $('#bankToBankSpecialInput').hide();
         });
     });
 </script>
@@ -214,7 +274,7 @@
 
         });
         $(' .buttons-print,.buttons-excel').addClass('btn btn-primary mr-1');
-    </script>
+</script>
 <script>
     $('#transactionsTable').DataTable({
         "displayLength": 5,
@@ -234,5 +294,17 @@
         "paging":         false
     });
     $(' .buttons-print,.buttons-excel').addClass('btn btn-primary mr-1');
+</script>
+<script>
+    function editDescription(transId){
+        $('#editModal').modal('toggle');
+        var path = $("#modalForm").attr('action')+ "/editDescription/" +transId;
+        $("#modalForm").attr('action', path );
+    };
+    function editClientName(transId){
+        $('#editModal').modal('toggle');
+        var path = $("#modalForm").attr('action')+ "/editClientName/" +transId;
+        $("#modalForm").attr('action', path );
+    };
 </script>
 @endsection

@@ -21,12 +21,13 @@ class Transaction extends Model
         'value',
         'date',
         'fromBankId',
-        'toBankAccountId',
+        'checkNumber',
+        'checkValidityDate',
         'description',
         'clientName',
         'currentBalance'
     ];
-    public function init($accountId=null, $userId=null, $type=null, $value=null, $date=null, $fromBankId=null, $toBankAccountId=null, $settled=null, $description=null, $clientName=null, $brandId)
+    public function init($accountId=null, $userId=null, $type=null, $value=null, $date=null, $fromBankId=null, $checkNumber=null,$validityDate=null, $settled=null, $confirmSettling =null,$checKToBankId,$checkSettlingDate, $description=null, $clientName=null, $brandId)
     {
         $this->brandId = $brandId;
         $this->accountId = $accountId;
@@ -35,10 +36,14 @@ class Transaction extends Model
         $this->value = $value;
         $this->date = $date;
         $this->fromBankId = $fromBankId;
-        $this->toBankAccountId = $toBankAccountId;
+        $this->checkNumber = $checkNumber;
+        $this->checkValidityDate = $validityDate;
         $this->settled = $settled;
+        $this->confirmSettling = $confirmSettling;
         $this->description = $description;
-        $this->clientName = $clientName;        
+        $this->clientName = $clientName;       
+        $this->checKToBankId = $checKToBankId;
+        $this->checkSettlingDate = $checkSettlingDate;
        
         $this->updateCurrentBalanceOnAddition();
 
@@ -101,18 +106,18 @@ class Transaction extends Model
         return $transactions;
     }
 
-    public static function getTransactionOfAccount ( $accountId, $fromDate=null, $toDate=null)
+    public static function getTransactionOfAccount ( $accountId, $brandId, $fromDate=null, $toDate=null)
     {
         $transactions = [];
-      
+        // Log::info('getTransactionOfAccount', ['accountId' => $accountId, "brandId"=>$brandId,"fromDate"=>$fromDate,"toDate"=>$toDate]);
         if($fromDate === null && $toDate === null)
-            $transactions = Transaction::where('accountId',$accountId)->orderBy('date','Asc')->get();
+            $transactions = Transaction::where([['accountId',$accountId],['brandId',$brandId]])->orderBy('date','Asc')->get();
         else if($fromDate != null && $toDate === null)
-            $transactions = Transaction::where('accountId',$accountId)->whereDate('date','>=',$fromDate)->orderBy('date','Asc')->get();
+            $transactions = Transaction::where([['accountId',$accountId],['brandId',$brandId]])->whereDate('date','>=',$fromDate)->orderBy('date','Asc')->get();
         else if ($fromDate === null && $toDate != null)
-            $transactions = Transaction::where('accountId',$accountId)->whereDate('date','<=',$toDate)->orderBy('date','Asc')->get();
+            $transactions = Transaction::where([['accountId',$accountId],['brandId',$brandId]])->whereDate('date','<=',$toDate)->orderBy('date','Asc')->get();
         else
-            $transactions = Transaction::where('accountId',$accountId)->whereDate('date','>=',$fromDate)->whereDate('date','<=', $toDate)->orderBy('date','Asc')->get();
+            $transactions = Transaction::where([['accountId',$accountId],['brandId',$brandId]])->whereDate('date','>=',$fromDate)->whereDate('date','<=', $toDate)->orderBy('date','Asc')->get();
         
         return $transactions;
     }
@@ -132,22 +137,22 @@ class Transaction extends Model
     }
     public static function getBrandCurrentBanksBalanceAtDate($brandId,  $date)
     {
-        $accounts = Account::where([['type','=','bank'], ['brandID','=',$brandId]])->get();
-        Log::debug($accounts);
+        $accounts = Account::where([['type','=','bank']])->get();
+        // Log::info("getBrandCurrentBanksBalanceAtDate",["brandId"=>$brandId,"date"=>$date,"banks"=>$accounts]);
         if(empty($accounts))
             return 0;
         $banksBalance = 0;
         foreach($accounts as $account)
         {
-            $transaction = Transaction::where('accountId',$account->id)->whereDate('date','<=',$date)->orderBy('date','Desc')->first();
-
+            $transaction = Transaction::where([['accountId',$account->id],['brandId',$brandId]])->whereDate('date','<=',$date)->orderBy('date','Desc')->first();
+            // Log::info("getBrandCurrentBanksBalanceAtDate",["brandId"=>$brandId,"date"=>$date,"banks"=>$accounts,"transactions"=>$transaction]);
             if(!$transaction)
             {
                 $banksBalance = $banksBalance + $account->initialBalance;
                 continue;
             }
             else
-                $transaction = Transaction::where( [['accountId','=',$account->id]])->whereDate('date','=',$transaction->date)->orderBy('id','Desc')->first();
+                $transaction = Transaction::where( [['accountId','=',$account->id],['brandId',$brandId]])->whereDate('date','=',$transaction->date)->orderBy('id','Desc')->first();
 
             $banksBalance = $banksBalance + $transaction->currentBalance;
         }
@@ -253,25 +258,25 @@ class Transaction extends Model
         return $deletionStatus;
     }
 
-    public static function settleCheck($transaction)
-    {
-        if($transaction->settled)
-            return;
+    // public static function settleCheck($transaction)
+    // {
+    //     if($transaction->settled)
+    //         return;
         
-        $transaction->settled = true;
+    //     $transaction->settled = true;
 
-        $bankTransaction = new Transaction();
+    //     // $bankTransaction = new Transaction();
         
         
-        $toBankAccount = Account::where('id', $transaction->toBankAccountId)->first();
+    //     // $toBankAccount = Account::where('id', $transaction->toBankAccountId)->first();
 
-        $toBankAccount->balance = $toBankAccount->balance + $transaction->value;
+    //     // $toBankAccount->balance = $toBankAccount->balance + $transaction->value;
         
-        DB::transaction(function () use($transaction, $toBankAccount, $bankTransaction) {
-            $transaction->save();
-            $toBankAccount->save();
-            $bankTransaction->init($transaction->toBankAccountId, Auth::user()->id, "add", $transaction->value, $transaction->date, null, null,null ,$transaction->description, $transaction->clientName, $transaction->brandId);
-            $bankTransaction->save();
-        }, 5);
-    }
+    //     // DB::transaction(function () use($transaction, $toBankAccount, $bankTransaction) {
+    //     //     $transaction->save();
+    //     //     $toBankAccount->save();
+    //     //     $bankTransaction->init($transaction->toBankAccountId, Auth::user()->id, "add", $transaction->value, $transaction->date, null, null, null, null, null ,$transaction->description, $transaction->clientName, $transaction->brandId);
+    //     //     $bankTransaction->save();
+    //     // }, 5);
+    // }
 }

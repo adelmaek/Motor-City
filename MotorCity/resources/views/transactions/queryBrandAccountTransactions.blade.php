@@ -31,7 +31,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="fromDateInput">To Date</label>
-                                    <input type="date" class="form-control" id="toDateInput" name="toDateInput" style="height: 42px;" required>     
+                                    <input type="date" class="form-control" id="toDateInput" name="toDateInput" style="height: 42px;" value={{$todayDate}} required>     
                                   </div>
                             </div>
                             @if (Auth::user()->admin)
@@ -63,7 +63,10 @@
                         <thead style="width:100%">
                             <tr>
                                 <th scope="col" style="text-align:center">Date</th>
-                                <th scope="col" style="text-align:center">Deposition</th>
+                                @if(!strcmp("check",$accountType))
+                                    <th scope="col" style="text-align:center">Validity Date</th>
+                                @endif
+                                <th scope="col" style="text-align:center">Deposite</th>
                                 <th scope="col" style="text-align:center">Withdrawal</th>
                                 <th scope="col" style="text-align:center">Current Balance</th>
                                 <th scope="col" style="text-align:center">Description</th>
@@ -78,6 +81,9 @@
                         @foreach ($transactions as $trans)
                             <tr>
                                 <td style="text-align:center">{{$trans->date}}</td>
+                                @if(!strcmp("check",$accountType))
+                                    <td style="text-align:center">{{$trans->checkValidityDate}}</td>
+                                @endif
                                 @if(!strcmp($trans->type,"add"))
                                     <td style="text-align:center">{{number_format($trans->value)}}</td>
                                 @else
@@ -94,18 +100,76 @@
                                 @if(!strcmp("check",$accountType))
                                     <td style="text-align:center">
                                         @if(!$trans->settled)
-                                            <a class="btn btn-info settle-confirm" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('settleCheck',[$trans->id])}}" role="button">Settle</a>
+                                            @if(\Carbon\Carbon::parse($trans->checkValidityDate)->gt(\Carbon\Carbon::parse($todayDate)))
+                                                <a class="btn btn-info disabled"  style="height:25px;padding: 3px 8px;padding-bottom: 3px;" role="button">Settle</a>
+                                            @else
+                                                <a class="btn btn-info " id="modalButton" data-item="{{$trans->id}}" data-toggle="modal" data-target="#settlingModal" style="height:25px;padding: 3px 8px;padding-bottom: 3px;"  role="button">Settle</a>
+                                            @endif
                                         @endif
                                         @if($trans->settled)
-                                            Settled
+                                            @if(!$trans->confirmSettling)
+                                                @if(\Carbon\Carbon::parse($trans->checkSettlingDate)->gt(\Carbon\Carbon::parse($todayDate)) || Auth::user()->admin)
+                                                    <a class="btn btn-info disabled"  style="height:25px;padding: 3px 8px;padding-bottom: 3px;" role="button">Confirm Settling</a>
+                                                @else
+                                                    <a class="btn btn-info " style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('confirmSettling',[$trans->id])}}" role="button" >Confirm Settling</a>
+                                                @endif
+                                            @else
+                                                Settled to {{App\Models\Bank::where('id',App\Models\Account::where('id',$trans->checKToBankId)->first()->bankID)->first()->name}} {{App\Models\Account::where('id',$trans->checKToBankId)->first()->name}}
+                                            @endif
+
                                         @endif
                                     </td>
                                 @endif
-                                <td style="text-align:center">
-                                    <a class="btn btn-danger delete-confirm" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('deleteTransaction',[$trans->id])}}" role="button">Delete</a>
-                                </td>
+                                @if(\Carbon\Carbon::parse($trans->date)->gte(\Carbon\Carbon::parse($yesterday)))
+                                    <td style="text-align:center">
+                                        <a class="btn btn-danger delete-confirm " style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('deleteTransaction',[$trans->id])}}" role="button" >Delete</a>
+                                    </td>
+                                @else 
+                                    <td style="text-align:center">
+                                        <a class="btn btn-danger delete-confirm disabled" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('deleteTransaction',[$trans->id])}}" role="button" >Delete</a>
+                                    </td>
+                                @endif
                             </tr>
                         @endforeach
+                            <div class="modal fade" id="settlingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered " role="document">
+                                    <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Settle</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="{{ url('/') }}" method="post" id="modalForm">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="settlingDateInput">To Date</label>
+                                                        <input type="date" class="form-control" id="settlingDateInput" name="settlingDateInput" style="height: 42px;" value={{$todayDate}} required>     
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="settlingBankInput">Settling Bank</label>
+                                                        <select class="form-control" style="height: 42px;" id="settlingBankInput" name="settlingBankInput" >
+                                                            <option value="" disabled selected>Settle to bank account</option>
+                                                            @foreach ($bankAccounts as $bankAccount)
+                                                                <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id',$bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <input type="submit" name="submit" class="btn btn-dark btn-md" value="Settle">
+                                            <input type="hidden" name="_token" value="{{Session::token()}}">
+                                        </form>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
                         </tbody>
                     </table>
                 </div>
@@ -113,7 +177,6 @@
         </div>
     </div>
 </div>
-
 @endsection
 
 
@@ -139,5 +202,12 @@
         "paging":         false
     });
     $(' .buttons-print,.buttons-excel').addClass('btn btn-primary mr-1');
+</script>
+<script>
+    $(document).on("click", "#modalButton", function () {
+        var itemid = $(this).attr('data-item');
+       var path = $("#modalForm").attr('action')+ "/settleCheck/" +itemid;
+       $("#modalForm").attr('action', path );
+    });
 </script>
 @endsection

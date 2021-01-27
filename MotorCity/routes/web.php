@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Account;
 use App\Models\Bank;
 use App\Models\Brand;
+use Carbon\Carbon;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,7 +17,8 @@ use App\Models\Brand;
 */
 view()->composer(['layouts/app'], function ($view) {
     $bankAccounts = Account::getBankAccounts();
-    $view->with(['bankAccounts'=>$bankAccounts]);
+    $posAccounts = Account::getPosAccounts();
+    $view->with(['bankAccounts'=>$bankAccounts,'posAccounts'=>$posAccounts]);
 });
 
 // Route::get('/', function () {
@@ -40,4 +42,12 @@ Route::post('/queryBrandAccountTransaction/{accountType}', [App\Http\Controllers
 Route::get('/queryBankAccountTransaction/{accountId}',[App\Http\Controllers\TransactionController::class, 'getQueryBankAccountTransaction'])->name('queryBankAccountTransaction')->middleware('auth');
 Route::post('/queryBankAccountTransaction/{accountId}',[App\Http\Controllers\TransactionController::class, 'getBankAccountTransaction'])->name('queryBankAccountTransaction')->middleware('auth');
 Route::get('/deleteTransaction/{transactionId}',[App\Http\Controllers\TransactionController::class, 'getDeleteTransaction'])->name('deleteTransaction')->middleware('auth');
-Route::get('/settleCheck/{transactionId}',[App\Http\Controllers\TransactionController::class, 'getSettleCheck'])->name('settleCheck')->middleware('auth');
+Route::post('/settleCheck/{transactionId}',[App\Http\Controllers\TransactionController::class, 'postSettleCheck'])->name('settleCheck')->middleware('auth');
+Route::get('/confirmSettling/{transactionId}',[App\Http\Controllers\TransactionController::class, 'getConfirmCheckSettling'])->name('confirmSettling')->middleware('auth');
+Route::post('/editDescription/{transactionId}',[App\Http\Controllers\TransactionController::class, 'postEditDescription'])->name('editDescription')->middleware('auth');
+Route::post('/editClientName/{transactionId}',[App\Http\Controllers\TransactionController::class, 'postEditClientName'])->name('editClientName')->middleware('auth');
+Route::get('/queryPosAccountTransaction/{accountId}',[App\Http\Controllers\TransactionController::class, 'getQueryPosAccountTransaction'])->name('queryPosAccountTransaction')->middleware('auth');
+Route::post('/queryPosAccountTransaction/{accountId}',[App\Http\Controllers\TransactionController::class, 'postQueryPosAccountTransaction'])->name('queryPosAccountTransaction')->middleware('auth');
+Route::post('/settlePosTransactions',[App\Http\Controllers\TransactionController::class, 'postSettlePosTransactions'])->name('settlePosTransactions')->middleware('auth');
+Route::post('/confirmSettlingPos/{transactionId}',[App\Http\Controllers\TransactionController::class, 'postConfirmSettlingPos'])->name('confirmSettlingPos')->middleware('auth');
+
