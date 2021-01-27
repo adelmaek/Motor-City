@@ -36,6 +36,17 @@ class HomeController extends Controller
         $currentUserAccounts = Auth::user()->getCurrentUserAccounts();
         $transactions = [];
         $transactions = Transaction::where('userId', Auth::user()->id)->limit(100)->orderBy('id','Desc')->get();
+        foreach($transactions as $transaction)
+        {
+            $account = Account::where('id', $transaction->accountId)->first();
+            $accountName = '';
+            if(!strcmp($account->type,'bank'))
+                $accountName = Bank::where('id', $account->bankID)->first()->name . " " .  $account->name;
+            else 
+                $accountName = str_replace(":"," ", $account->name);
+
+            $transaction->setAttribute('accountName',$accountName);
+        }
         $today = Carbon::today()->toDateString();
         $posAccounts = Account::getPosAccounts();
         return view('home',['posAccounts'=>$posAccounts,"banks"=>$banks, "bankAccounts"=>$bankAccounts, "brands"=>$brands, "currentUserAccounts"=>$currentUserAccounts, 'transactions'=>$transactions,'today'=>$today] );
