@@ -22,9 +22,9 @@ class UserSeeder extends Seeder
             'brandId'=> -1
         ]);
         DB::table('users')->insert([
-            'name' => "Ahmed Mohamed",
-            'email' => 'ahmedMohamed@gmail.com',
-            'password' => Hash::make('password'),
+            'name' => "Admin",
+            'email' => 'admin',
+            'password' => Hash::make('baba@motorcity'),
             'admin' => false,
             'brandId'=> 1
         ]);

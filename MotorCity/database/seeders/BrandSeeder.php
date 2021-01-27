@@ -15,10 +15,10 @@ class BrandSeeder extends Seeder
     {
         //
         DB::table('brands')->insert([
-            'name' => "Toyota"
+            'name' => "Peugeot"
         ]);
         DB::table('brands')->insert([
-            'name' => "Mazda"
+            'name' => "MG"
         ]);
 
     }
