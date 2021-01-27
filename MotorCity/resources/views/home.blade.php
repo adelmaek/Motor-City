@@ -272,7 +272,8 @@
             ]   ,
             "scrollY":        "390px",
             "scrollCollapse": true,
-            "paging":         false
+            "paging":         false,
+            "order": []
 
         });
         $(' .buttons-print,.buttons-excel').addClass('btn btn-primary mr-1');
@@ -293,7 +294,8 @@
         "sScrollX": "100%",
         responsive: true,
         "scrollCollapse": true,
-        "paging":         false
+        "paging":         false,
+        "order": []
     });
     $(' .buttons-print,.buttons-excel').addClass('btn btn-primary mr-1');
 </script>
