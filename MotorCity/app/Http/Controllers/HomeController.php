@@ -34,6 +34,15 @@ class HomeController extends Controller
         $bankAccounts = Account::getBankAccounts();
         $brands = Brand::all();
         $currentUserAccounts = Auth::user()->getCurrentUserAccounts();
+        foreach($currentUserAccounts as $acc)
+        {
+            if(!strcmp($acc->type,"bank"))
+                $accountName = Bank::where('id', $acc->bankID)->first()->name . " " . $acc->name;
+            else
+                $accountName = str_replace(":"," ", $acc->name);
+            
+            $acc->setAttribute('accountName', $accountName);
+        }
         $transactions = [];
         $transactions = Transaction::where('userId', Auth::user()->id)->limit(100)->orderBy('id','Desc')->get();
         foreach($transactions as $transaction)

@@ -157,7 +157,7 @@
                             <tbody>
                             @foreach ($currentUserAccounts as $account)
                                 <tr>
-                                    <td style="text-align:center">{{$account->name}}</td>
+                                    <td style="text-align:center">{{$account->accountName}}</td>
                                     <td style="text-align:center">{{number_format($account->balance)}}</td>
                                 </tr>
                             @endforeach
