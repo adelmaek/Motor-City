@@ -252,8 +252,8 @@ class TransactionController extends Controller
     {
         $transaction = Transaction::where('id', $transactionId)->first();
         // Transaction::settleCheck($transaction);
-        Log::debug($request);
-        Log::debug($transactionId);
+        // Log::debug($request);
+        // Log::debug($transactionId);
         $transaction->settled = true;
         $transaction->checkSettlingDate = $request['settlingDateInput'];
         $transaction->checKToBankId = $request['settlingBankInput'];
@@ -340,7 +340,7 @@ class TransactionController extends Controller
     {
         if($request['settled'] === null)
             return redirect()->back();
-            
+
         $totalValue = 0;
         $transaction = null;
         foreach($request['settled'] as $transId)

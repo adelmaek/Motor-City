@@ -53,8 +53,11 @@ class HomeController extends Controller
             $accountName = '';
             if(!strcmp($account->type,'bank'))
                 $accountName = Bank::where('id', $account->bankID)->first()->name . " " .  $account->name;
-            else 
+            else
+            {
                 $accountName = str_replace(":"," ", $account->name);
+                $accountName = str_replace("posCommission", "POS commission", $accountName);
+            }
 
             $transaction->setAttribute('accountName',$accountName);
         }
