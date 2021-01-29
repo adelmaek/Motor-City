@@ -191,7 +191,7 @@
                             <tr>
                                 <td style="text-align:center">{{$trans->date}}</td>
                                 @if(!strcmp('add', $trans->type))
-                                    <td style="text-align:center">Deposite</td>
+                                    <td style="text-align:center">Deposit</td>
                                 @else
                                     <td style="text-align:center">Withdrawal</td>
                                 @endif

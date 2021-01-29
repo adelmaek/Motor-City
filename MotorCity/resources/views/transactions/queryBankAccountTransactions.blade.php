@@ -53,7 +53,7 @@
                         <thead style="width:100%">
                             <tr>
                                 <th scope="col" style="text-align:center">Date</th>
-                                <th scope="col" style="text-align:center">Deposite</th>
+                                <th scope="col" style="text-align:center">Deposit</th>
                                 <th scope="col" style="text-align:center">Withdrawal</th>
                                 <th scope="col" style="text-align:center">Current Balance</th>
                                 <th scope="col" style="text-align:center">Description</th>
