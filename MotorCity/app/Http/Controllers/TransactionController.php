@@ -338,6 +338,9 @@ class TransactionController extends Controller
 
     public function postSettlePosTransactions(Request $request)
     {
+        if($request['settled'] === null)
+            return redirect()->back();
+            
         $totalValue = 0;
         $transaction = null;
         foreach($request['settled'] as $transId)
