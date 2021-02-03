@@ -51,15 +51,22 @@ class HomeController extends Controller
         {
             $account = Account::where('id', $transaction->accountId)->first();
             $accountName = '';
+            $accountType = '';
             if(!strcmp($account->type,'bank'))
+            {
                 $accountName = Bank::where('id', $account->bankID)->first()->name . " " .  $account->name;
+                $accountType = 'bank';
+            }
             else
             {
+                if(!strcmp($account->type,'check'))
+                    $accountType = 'check';
                 $accountName = str_replace(":"," ", $account->name);
                 $accountName = str_replace("posCommission", "POS commission", $accountName);
             }
 
             $transaction->setAttribute('accountName',$accountName);
+            $transaction->setAttribute('accountType',$accountType);
         }
         $today = Carbon::today('Egypt')->toDateString();
         $posAccounts = Account::getPosAccounts();

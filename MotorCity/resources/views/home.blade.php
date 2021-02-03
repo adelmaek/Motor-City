@@ -190,7 +190,13 @@
                         </thead>
                         <tbody>
                         @foreach ($transactions as $trans)
-                            <tr>
+                            @if(!strcmp($trans->accountType,"check"))
+                                <tr style="background-color:#d8d52a">
+                            @elseif(!strcmp($trans->accountType,"bank"))
+                                <tr style="background-color:#1c9e38">
+                            @else
+                                <tr>
+                            @endif
                                 <td style="text-align:center">{{$trans->date}}</td>
                                 @if(!strcmp('add', $trans->type))
                                     <td style="text-align:center">Deposit</td>
@@ -320,7 +326,10 @@
                 {
                 extend: 'excel',
                 title: 'Motor-City-Transactions',
-                footer: true
+                footer: true,
+                exportOptions: {
+                columns: ':not(:last-child)',
+                }
             }
         ]   ,
         "scrollY":"390px",
