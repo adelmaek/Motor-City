@@ -74,7 +74,7 @@
                                 @if(!strcmp("check",$accountType))
                                     <th scope="col" style="text-align:center">Settle</th>
                                 @endif
-                                <th scope="col" style="text-align:center">Delete</th>
+                                {{-- <th scope="col" style="text-align:center">Delete</th> --}}
                             </tr>
                         </thead>
                         <tbody>
@@ -120,7 +120,7 @@
                                         @endif
                                     </td>
                                 @endif
-                                @if(\Carbon\Carbon::parse($trans->date)->gte(\Carbon\Carbon::parse($yesterday))|| Auth::user()->admin)
+                                {{-- @if(\Carbon\Carbon::parse($trans->date)->gte(\Carbon\Carbon::parse($yesterday))|| Auth::user()->admin)
                                     <td style="text-align:center">
                                         <a class="btn btn-danger delete-confirm " style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('deleteTransaction',[$trans->id])}}" role="button" >Delete</a>
                                     </td>
@@ -128,7 +128,7 @@
                                     <td style="text-align:center">
                                         <a class="btn btn-danger delete-confirm disabled" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('deleteTransaction',[$trans->id])}}" role="button" >Delete</a>
                                     </td>
-                                @endif
+                                @endif --}}
                             </tr>
                         @endforeach
                             <div class="modal fade" id="settlingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -154,8 +154,8 @@
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label for="settlingBankInput">Settling Bank</label>
-                                                        <select class="form-control" style="height: 42px;" id="settlingBankInput" name="settlingBankInput" >
-                                                            <option value="" disabled selected>Settle to bank account</option>
+                                                        <select class="form-control" style="height: 42px;" id="settlingBankInput" name="settlingBankInput" required>
+                                                            {{-- <option value="" disabled selected>Settle to bank account</option> --}}
                                                             @foreach ($bankAccounts as $bankAccount)
                                                                 <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id',$bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>
                                                             @endforeach

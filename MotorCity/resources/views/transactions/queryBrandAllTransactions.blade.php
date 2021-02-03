@@ -52,7 +52,7 @@
                             <tr>
                                 <th scope="col" style="text-align:center"><div>Date</div> <div><br></div></th>
                                 <th scope="col" style="text-align:center"><div>Cash</div> <div>{{number_format($cashBalance)}}</div></th>
-                                <th scope="col" style="text-align:center"><div>Custody Cash</div> <div>{{number_format($custodyCashBalance)}}</div></th>
+                                {{-- <th scope="col" style="text-align:center"><div>Custody Cash</div> <div>{{number_format($custodyCashBalance)}}</div></th> --}}
                                 <th scope="col" style="text-align:center"><div>Cash Dollar</div> <div>{{number_format($cashDollarBalance)}}</div></th>
                                 <th scope="col" style="text-align:center"><div>Checks</div> <div>{{number_format($checKBalance)}}</div></th>
                                 <th scope="col" style="text-align:center"><div>Visa</div> <div>{{number_format($visaBalance)}}</div></th>
@@ -66,7 +66,7 @@
                             <tr>
                                 <td style="text-align:center; border: 1px solid black;">{{$row->date}}</td>
                                 <td style="text-align:center; border: 1px solid black;">{{number_format($row->cash)}}</td>
-                                <td style="text-align:center; border: 1px solid black;">{{number_format($row->custodyCash)}}</td>
+                                {{-- <td style="text-align:center; border: 1px solid black;">{{number_format($row->custodyCash)}}</td> --}}
                                 <td style="text-align:center; border: 1px solid black;">{{number_format($row->cashDollar)}}</td>
                                 <td style="text-align:center; border: 1px solid black;">{{number_format($row->check)}}</td>
                                 <td style="text-align:center; border: 1px solid black;">{{number_format($row->visa)}}</td>

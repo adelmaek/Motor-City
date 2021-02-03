@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+{{-- <div class="alert alert-danger" role="alert" id="formValidationAlert">
+</div> --}}
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -31,11 +33,11 @@
                                     <select class="form-control balanceInput" style="height: 42px;border: 2px solid black;" id="balanceInput" name="balanceInput" required>
                                         <option value="" disabled selected>Select Balance</option>
                                         <option value="cash">Cash</option>
-                                        <option value="cashDollar">Cash $</option>
+                                        <option value="cashDollar">$</option>
                                         {{-- <option value="custodyCash">Custody cash</option> --}}
-                                        <option value="check">Check</option>
+                                        <option value="check">شيكات</option>
                                         {{-- <option value="visa">POS</option> --}}
-                                        <option value="bankToBank">Bank to bank</option>
+                                        {{-- <option value="bankToBank">Bank to bank</option> --}}
                                         @foreach ($bankAccounts as $bankAccount)
                                             <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id', $bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>
                                         @endforeach
@@ -73,7 +75,7 @@
                         <div class="row" id="checkSpecialInput">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="checkIsFromBankInput">Check form bank</label>
+                                    <label for="checkIsFromBankInput">اسم البنك</label>
                                     <select class="form-control" style="height: 42px;border: 2px solid black;" id="checkIsFromBankInput" name="checkIsFromBankInput" >
                                         <option value="" disabled selected>From bank</option>
                                         @foreach ($banks as $bank)
@@ -85,21 +87,21 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="checkNumberInput">Check number</label>
+                                    <label for="checkNumberInput">رقم الشيك</label>
                                     <input type="text" class="form-control" id="checkNumberInput" name="checkNumberInput" placeholder="Check Number"  style="min-width: 100px;border: 2px solid black;" >
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="dateInput">Validity Date</label>
-                                    <input type="date" class="form-control" id="checkValidityDateInput" name="checkValidityDateInput" style="height: 42px;border: 2px solid black;" >  
+                                    <label for="dateInput">تاريخ الشيك</label>
+                                    <input type="date" class="form-control" id="checkValidityDateInput" value="{{$today}}" name="checkValidityDateInput" style="height: 42px;border: 2px solid black;" >  
                                 </div>
                             </div>
                         </div>
                         <div class="row" id="bankToBankSpecialInput">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="checkIsFromBankInput">Form bank</label>
+                                    <label for="fromBank">Form bank</label>
                                     <select class="form-control" style="height: 42px;border: 2px solid black;" id="fromBank" name="fromBank" >
                                         <option value="" disabled selected>From bank</option>
                                         @foreach ($bankAccounts as $bankAccount)
@@ -110,7 +112,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="checkIsFromBankInput">To bank</label>
+                                    <label for="toBank">To bank</label>
                                     <select class="form-control" style="height: 42px;border: 2px solid black;" id="toBank" name="toBank" >
                                         <option value="" disabled selected>To bank</option>
                                         @foreach ($bankAccounts as $bankAccount)
@@ -244,6 +246,11 @@
 @section('extraJS')
 <script>
     $(document).ready(function(){
+
+        // $("#formValidationAlert").hide()
+        // $("select.balanceInput").change(function(){
+        //     $("#formValidationAlert").hide()
+        // });
         $("select.balanceInput").change(function(){
             var selectedBalance = $(this).children("option:selected").val();
             if(!selectedBalance.localeCompare("check"))
@@ -256,6 +263,32 @@
             else
                 $('#bankToBankSpecialInput').hide();
         });
+        // $("#toBank").change(function(){
+        //     var toBank = $("#toBank").val();
+        //     var fromBank = $( "#fromBank" ).val();
+        //     if(fromBank === toBank)
+        //     {
+        //         $("#formValidationAlert").html("Invalid transaction from bank to same bank.")
+        //         $("#formValidationAlert").show()
+        //     }
+        //     else
+        //         $("#formValidationAlert").hide()
+                
+        // });
+
+        // $("#fromBank").change(function(){
+        //     var toBank = $("#toBank").val();
+        //     var fromBank = $( "#fromBank" ).val();
+        //     if(fromBank === toBank)
+        //     {
+        //         $("#formValidationAlert").html("Invalid transaction from bank to same bank.")
+        //         $("#formValidationAlert").show()
+        //     }
+        //     else
+        //         $("#formValidationAlert").hide()
+                
+        // });
+       
     });
 </script>
 <script>

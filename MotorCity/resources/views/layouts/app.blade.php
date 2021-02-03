@@ -68,7 +68,7 @@
                                 <a href="javascript:void(0)" class="nav-link dropdown-toggle u-dropdown link hide-menu" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Cash Accounts</a>
                                 <div class="dropdown-menu animated flipInY">
                                     <a class="dropdown-item" href="{{route('queryBrandAccountTransaction',["cash"])}}">Cash</a>
-                                    <a class="dropdown-item" href="{{route('queryBrandAccountTransaction',["cashDollar"])}}">Cash $</a>
+                                    <a class="dropdown-item" href="{{route('queryBrandAccountTransaction',["cashDollar"])}}">$</a>
                                     {{-- <a class="dropdown-item" href="{{route('queryBrandAccountTransaction',["custodyCash"])}}">Custody Cash</a> --}}
                                 </div>
                             </div>
