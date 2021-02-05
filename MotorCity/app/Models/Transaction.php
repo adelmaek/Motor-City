@@ -8,6 +8,7 @@ use App\Models\TransactionRow;
 use Log;
 use DB;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class Transaction extends Model
 {
@@ -279,4 +280,18 @@ class Transaction extends Model
     //     //     $bankTransaction->save();
     //     // }, 5);
     // }
+
+    public static function getCurrentMonthTransactions($accountId)
+    {
+        $account = Account::where('id', $accountId)->first();
+        if(Auth::user()->admin)
+        {
+            return Transaction::where('accountId', $account->id)->whereYear('date', Carbon::now('Egypt')->year)->whereMonth('date', Carbon::now('Egypt')->month)->get();
+        }
+        else
+        {
+            return Transaction::where([['accountId', $account->id],['brandId', Auth::user()->brandId]])->whereYear('date', Carbon::now('Egypt')->year)->whereMonth('date', Carbon::now('Egypt')->month)->get();
+        }
+    }
+
 }

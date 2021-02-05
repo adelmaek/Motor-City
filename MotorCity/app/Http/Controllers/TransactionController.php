@@ -190,7 +190,26 @@ class TransactionController extends Controller
         $todayDate = Carbon::today('Egypt')->toDateString();
         $brands = Brand::all();
         $bankAccounts = Account::getBankAccounts();
-        return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType, 'transactions'=>[], 'brands'=>$brands, "todayDate"=>$todayDate, "bankAccounts"=>$bankAccounts,'yesterday'=>$yesterday]);
+    
+        //getting the current month all brands transaction for admin or only brand trasnactions for non admin user
+        $transactions = [];
+        if(!strcmp("posCommission",$accountType))
+        {
+            $posAccount = Account::where('type', $accountType)->first();
+            $transactions = Transaction::getCurrentMonthTransactions($posAccount->id);
+
+        }
+        else
+        {
+            if(Auth::user()->admin)
+                $brandsIds = Brand::all('id');
+            else
+                $brandsIds = Brand::where('id',Auth::user()->brandId)->get('id');
+
+            $accountsIds = Account::whereIn('brandID', $brandsIds)->where('type', $accountType)->get('id');
+            $transactions = Transaction::whereIn('accountId', $accountsIds)->whereYear('date', Carbon::now('Egypt')->year)->whereMonth('date', Carbon::now('Egypt')->month)->get();
+        }     
+        return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType, 'transactions'=>$transactions, 'brands'=>$brands, "todayDate"=>$todayDate, "bankAccounts"=>$bankAccounts,'yesterday'=>$yesterday]);
     }
 
     public function getBrandAccountTransaction($accountType, Request $request)
@@ -229,7 +248,7 @@ class TransactionController extends Controller
         $yesterday = Carbon::yesterday()->toDateString();
         $today = Carbon::today('Egypt')->toDateString();
         $brands = Brand::all();
-        $transactions = [];
+        $transactions = Transaction::getCurrentMonthTransactions($accountId);
         return view('transactions.queryBankAccountTransactions',['brands'=>$brands,'accountId'=>$accountId,'transactions'=>$transactions, 'yesterday'=>$yesterday, 'today'=>$today]);
     }
     public function getBankAccountTransaction($accountId, Request $request)
@@ -326,7 +345,7 @@ class TransactionController extends Controller
         $today = Carbon::today('Egypt')->toDateString();
         $brands = Brand::all();
         $bankAccounts = Account::getBankAccounts();
-        $transactions = [];
+        $transactions = Transaction::getCurrentMonthTransactions($accountId);
         return view('transactions.queryPosAccountTransactions',['bankAccounts'=>$bankAccounts,'brands'=>$brands,'accountId'=>$accountId,'transactions'=>$transactions, 'yesterday'=>$yesterday, 'today'=>$today]);
     }
 
