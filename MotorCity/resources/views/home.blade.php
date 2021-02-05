@@ -94,7 +94,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="dateInput">Date</label>
-                                    <input type="date" class="form-control" id="dateInput" name="dateInput" style="height: 42px;border: 2px solid black;" value="{{$today}}"  required>     
+                                    <input type="date" class="form-control" id="dateInput" name="dateInput" style="height: 42px;border: 2px solid black;" value="{{$today}}" max="{{$today}}"  required>     
                                 </div>
                             </div>
                         </div>
@@ -125,7 +125,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="dateInput">تاريخ الشيك</label>
+                                    <label for="checkValidityDateInput">تاريخ الشيك</label>
                                     <input type="date" class="form-control" id="checkValidityDateInput" value="{{$today}}" name="checkValidityDateInput" style="height: 42px;border: 2px solid black;" >  
                                 </div>
                             </div>
