@@ -19,6 +19,8 @@
                         <h3 class="card-title">Query Checks Transactions</h3>
                     @elseif(!strcmp('visa', $accountType))
                         <h3 class="card-title">Query Visa Transactions</h3>
+                    @elseif(!strcmp('posCommission', $accountType))
+                        <h3 class="card-title">Query POS Commissions Transactions</h3>
                     @endif
                     <form action="{{route('queryBrandAccountTransaction',[$accountType])}}" method="post">
                         <div class="row">
@@ -39,7 +41,11 @@
                                 <div class="form-group">
                                     <label for="brandIdInput">Brand</label>
                                     <select class="form-control" style="height: 42px;" id="brandIdInput" name="brandIdInput" required>
-                                        <option value="" disabled selected>Choose brand</option>
+                                        @if(!strcmp("posCommission", $accountType))
+                                            <option value="all" selected>All</option>
+                                        @else
+                                            <option value="" disabled selected>Choose brand</option>
+                                        @endif
                                         @foreach ($brands as $brand)
                                             <option value="{{$brand->id}}">{{$brand->name}}</option>
                                         @endforeach                                        

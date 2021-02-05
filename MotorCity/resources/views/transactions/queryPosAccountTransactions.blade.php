@@ -29,7 +29,7 @@
                                 <div class="form-group">
                                     <label for="brandIdInput">Brand</label>
                                     <select class="form-control" style="height: 42px;" id="brandIdInput" name="brandIdInput" required>
-                                        <option value="" disabled selected>Choose brand</option>
+                                        <option value="all"  selected>All</option>
                                         @foreach ($brands as $brand)
                                             <option value="{{$brand->id}}">{{$brand->name}}</option>
                                         @endforeach                                        

@@ -221,15 +221,22 @@ class TransactionController extends Controller
         $brands = Brand::all();
         $brandId = 0; //just intialization
         if($request['brandIdInput'] != null)
-            $brandId = $request['brandIdInput'];
+        {
+            if(!strcmp('all', $request['brandIdInput']))
+                $brandId = Brand::all('id');
+            else
+                $brandId = Brand::where('id', $request['brandIdInput'])->get('id');
+        }
         else
-            $brandId = Auth::user()->brandId;
+            $brandId = Brand::where('id', Auth::user()->brandId)->get('id');
+
+        // Log::debug($brandId);
         
         $account = null;
         if(!strcmp("posCommission", $accountType))
             $account = Account::where("type", $accountType)->first();
         else
-            $account = Account::where('brandID',$brandId)->where("type", $accountType)->first();
+            $account = Account::whereIn('brandID',$brandId)->where("type", $accountType)->first();
 
         if($account === null)
             return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType,'transactions'=>[], 'brands'=>$brands, "todayDate"=>$todayDate, "bankAccounts"=>$bankAccounts]);
@@ -260,9 +267,14 @@ class TransactionController extends Controller
         $brands = Brand::all();
         $brandId = 0; //just intialization
         if($request['brandIdInput'] != null)
-            $brandId = $request['brandIdInput'];
+        {
+            if(!strcmp('all', $request['brandIdInput']))
+                $brandId = Brand::all('id');
+            else
+                $brandId = Brand::where('id', $request['brandIdInput'])->get('id');
+        }
         else
-            $brandId = Auth::user()->brandId;
+            $brandId = Brand::where('id', Auth::user()->brandId)->get('id');
         // Log::debug($brandId);
         $transactions = [];
         $transactions = Transaction::getTransactionOfAccount($accountId, $brandId, $fromDate, $toDate);
@@ -362,9 +374,14 @@ class TransactionController extends Controller
         $account = Account::where('id', $accountId)->first();
         $brandId = 0;
         if($request['brandIdInput'] != null)
-            $brandId = $request['brandIdInput'];
+        {
+            if(!strcmp('all', $request['brandIdInput']))
+                $brandId = Brand::all('id');
+            else
+                $brandId = Brand::where('id', $request['brandIdInput'])->get('id');
+        }
         else
-            $brandId = Auth::user()->brandId;
+            $brandId = Brand::where('id', Auth::user()->brandId)->get('id');
 
         $transactions = [];
         $transactions = Transaction::getTransactionOfAccount($accountId, $brandId, $fromDate, $toDate);

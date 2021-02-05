@@ -107,18 +107,34 @@ class Transaction extends Model
         return $transactions;
     }
 
-    public static function getTransactionOfAccount ( $accountId, $brandId, $fromDate=null, $toDate=null)
+    // public static function getTransactionOfAccount ( $accountId, $brandId, $fromDate=null, $toDate=null)
+    // {
+    //     $transactions = [];
+    //     // Log::info('getTransactionOfAccount', ['accountId' => $accountId, "brandId"=>$brandId,"fromDate"=>$fromDate,"toDate"=>$toDate]);
+    //     if($fromDate === null && $toDate === null)
+    //         $transactions = Transaction::where([['accountId',$accountId],['brandId',$brandId]])->orderBy('date','Asc')->get();
+    //     else if($fromDate != null && $toDate === null)
+    //         $transactions = Transaction::where([['accountId',$accountId],['brandId',$brandId]])->whereDate('date','>=',$fromDate)->orderBy('date','Asc')->get();
+    //     else if ($fromDate === null && $toDate != null)
+    //         $transactions = Transaction::where([['accountId',$accountId],['brandId',$brandId]])->whereDate('date','<=',$toDate)->orderBy('date','Asc')->get();
+    //     else
+    //         $transactions = Transaction::where([['accountId',$accountId],['brandId',$brandId]])->whereDate('date','>=',$fromDate)->whereDate('date','<=', $toDate)->orderBy('date','Asc')->get();
+        
+    //     return $transactions;
+    // }
+
+    public static function getTransactionOfAccount ( $accountId, $brandIds, $fromDate=null, $toDate=null)
     {
         $transactions = [];
         // Log::info('getTransactionOfAccount', ['accountId' => $accountId, "brandId"=>$brandId,"fromDate"=>$fromDate,"toDate"=>$toDate]);
         if($fromDate === null && $toDate === null)
-            $transactions = Transaction::where([['accountId',$accountId],['brandId',$brandId]])->orderBy('date','Asc')->get();
+            $transactions = Transaction::where('accountId',$accountId)->whereIn('brandId', $brandIds)->orderBy('date','Asc')->get();
         else if($fromDate != null && $toDate === null)
-            $transactions = Transaction::where([['accountId',$accountId],['brandId',$brandId]])->whereDate('date','>=',$fromDate)->orderBy('date','Asc')->get();
+            $transactions = Transaction::where('accountId',$accountId)->whereIn('brandId', $brandIds)->whereDate('date','>=',$fromDate)->orderBy('date','Asc')->get();
         else if ($fromDate === null && $toDate != null)
-            $transactions = Transaction::where([['accountId',$accountId],['brandId',$brandId]])->whereDate('date','<=',$toDate)->orderBy('date','Asc')->get();
+            $transactions = Transaction::where('accountId',$accountId)->whereIn('brandId', $brandIds)->whereDate('date','<=',$toDate)->orderBy('date','Asc')->get();
         else
-            $transactions = Transaction::where([['accountId',$accountId],['brandId',$brandId]])->whereDate('date','>=',$fromDate)->whereDate('date','<=', $toDate)->orderBy('date','Asc')->get();
+            $transactions = Transaction::where('accountId',$accountId)->whereIn('brandId', $brandIds)->whereDate('date','>=',$fromDate)->whereDate('date','<=', $toDate)->orderBy('date','Asc')->get();
         
         return $transactions;
     }
