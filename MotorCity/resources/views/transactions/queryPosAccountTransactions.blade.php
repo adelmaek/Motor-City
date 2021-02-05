@@ -24,7 +24,7 @@
                                     <input type="date" class="form-control" id="toDateInput" name="toDateInput" style="height: 42px;" value={{$today}} required>     
                                   </div>
                             </div>
-                            {{-- @if (Auth::user()->admin)
+                            @if (Auth::user()->admin)
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="brandIdInput">Brand</label>
@@ -36,7 +36,7 @@
                                     </select>
                                 </div>
                             </div>
-                            @endif --}}
+                            @endif
                         </div>
                         <input type="submit" name="submit" class="btn btn-dark btn-md" value="Submit">
                         <input type="hidden" name="_token" value="{{Session::token()}}">

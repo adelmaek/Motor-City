@@ -194,7 +194,13 @@ class TransactionController extends Controller
             $brandId = $request['brandIdInput'];
         else
             $brandId = Auth::user()->brandId;
-        $account = Account::where('brandID',$brandId)->where("type", $accountType)->first();
+        
+        $account = null;
+        if(!strcmp("posCommission", $accountType))
+            $account = Account::where("type", $accountType)->first();
+        else
+            $account = Account::where('brandID',$brandId)->where("type", $accountType)->first();
+            
         if($account === null)
             return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType,'transactions'=>[], 'brands'=>$brands, "todayDate"=>$todayDate, "bankAccounts"=>$bankAccounts]);
 
@@ -324,14 +330,14 @@ class TransactionController extends Controller
         $bankAccounts = Account::getBankAccounts();
 
         $account = Account::where('id', $accountId)->first();
-        // $brandId = 0;
-        // if($request['brandIdInput'] != null)
-        //     $brandId = $request['brandIdInput'];
-        // else
-        //     $brandId = Auth::user()->brandId;
+        $brandId = 0;
+        if($request['brandIdInput'] != null)
+            $brandId = $request['brandIdInput'];
+        else
+            $brandId = Auth::user()->brandId;
 
         $transactions = [];
-        $transactions = Transaction::getTransactionOfAccount($accountId, $account->brandID, $fromDate, $toDate);
+        $transactions = Transaction::getTransactionOfAccount($accountId, $brandId, $fromDate, $toDate);
         
         return view('transactions.queryPosAccountTransactions',['bankAccounts'=>$bankAccounts,'brands'=>$brands,'accountId'=>$accountId,'transactions'=>$transactions, 'yesterday'=>$yesterday, 'today'=>$today]);
     }
@@ -366,7 +372,7 @@ class TransactionController extends Controller
             $description = "A settling transaction";
             $clientName = Auth::user()->name;
             DB::transaction(function () use($settlingTransaction, $transaction, $totalValue, $today, $account, $description, $clientName) {
-                $settlingTransaction->init($account->id, Auth::user()->id, "sub", $totalValue, $today, null, null, null, true, null ,null,null,$description, $clientName, $account->brandID);
+                $settlingTransaction->init($account->id, Auth::user()->id, "sub", $totalValue, $today, null, null, null, true, null ,null,null,$description, $clientName, $transaction->brandId);
                 $settlingTransaction->save();
                 $account->save();
             }, 5);
@@ -380,13 +386,15 @@ class TransactionController extends Controller
 
         $brandId = $transaction->brandId;
         $balanceInput = "posCommission";
-        $commissionAccount = Account::where([['type','=',$balanceInput],['brandId','=',$brandId]])->first();
+        $commissionAccount = Account::where([['type','=',$balanceInput]])->first();
         if($commissionAccount === null)
         {
-            $brand = Brand::where('id','=',$brandId)->first();
-            $name = $brand->name . ":" . $balanceInput;
+            // $brand = Brand::where('id','=',$brandId)->first();
+            // $name = $brand->name . ":" . $balanceInput;
+            $name = "POS Commission";
             $commissionAccount = new Account();
-            $commissionAccount->init($name, $balanceInput, 0, null, $brandId);
+            // $commissionAccount->init($name, $balanceInput, 0, null, $brandId);
+            $commissionAccount->init($name, $balanceInput, 0, null, null);
             $commissionAccount->save();
         }
 
@@ -410,9 +418,9 @@ class TransactionController extends Controller
 
 
 
-        DB::transaction(function () use($transaction,$bankTransaction, $commissionTransaction, $bankAccount,$commissionAccount, $bankValue, $commissionValue, $today, $description) {
-            $bankTransaction->init($bankAccount->id, Auth::user()->id, "add", $bankValue, $today, null, null, null, null, null ,null,null,$description, Auth::user()->name, $transaction->brandId);
-            $commissionTransaction->init($commissionAccount->id, Auth::user()->id, "add", $commissionValue, $today, null, null, null, null, null ,null,null,$description, Auth::user()->name, $commissionAccount->brandID);
+        DB::transaction(function () use($transaction,$bankTransaction, $commissionTransaction, $bankAccount,$commissionAccount, $bankValue, $commissionValue, $today, $description,$brandId) {
+            $bankTransaction->init($bankAccount->id, Auth::user()->id, "add", $bankValue, $today, null, null, null, null, null ,null,null,$description, Auth::user()->name, $brandId);
+            $commissionTransaction->init($commissionAccount->id, Auth::user()->id, "add", $commissionValue, $today, null, null, null, null, null ,null,null,$description, Auth::user()->name, $brandId);
             $bankTransaction->save();
             $commissionTransaction->save();
             $transaction->save();

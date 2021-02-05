@@ -48,7 +48,8 @@ class Account extends Model
         if(!$user)
             return Account::where('type',"visa")->get();
         if($user->admin == 0) 
-            $posAccounts = Account::where('brandID',$user->brandId)->where('type',"visa")->get();
+            $posAccounts = Account::where('type',"visa")->get();
+            // $posAccounts = Account::where('brandID',$user->brandId)->where('type',"visa")->get();
         else
             $posAccounts = Account::where('type',"visa")->get();
         
