@@ -207,6 +207,7 @@
                             <tr>
                                 <th scope="col" style="text-align:center">Date</th>
                                 <th scope="col" style="text-align:center">Type</th>
+                                <th scope="col" style="text-align:center">Brand</th>
                                 <th scope="col" style="text-align:center">Account</th>
                                 <th scope="col" style="text-align:center">Value</th>
                                 <th scope="col" style="text-align:center">Description</th>
@@ -229,6 +230,7 @@
                                 @else
                                     <td style="text-align:center">Withdrawal</td>
                                 @endif
+                                <td style="text-align:center">{{App\Models\Brand::where('id', $trans->brandId)->first()->name}}</td>
                                 <td style="text-align:center">{{$trans->accountName}}</td> 
                                 <td style="text-align:center">{{number_format($trans->value)}}</td> 
                                 <td style="text-align:center" onclick="editDescription({{$trans->id}});">{{$trans->description}}</td>

@@ -56,6 +56,7 @@
                                 <th scope="col" style="text-align:center">Deposit</th>
                                 <th scope="col" style="text-align:center">Withdrawal</th>
                                 <th scope="col" style="text-align:center">Current Balance</th>
+                                <th scope="col" style="text-align:center">Brand</th>
                                 <th scope="col" style="text-align:center">Description</th>
                                 <th scope="col" style="text-align:center">Client</th>
                                 {{-- <th scope="col" style="text-align:center">Delete</th> --}}
@@ -76,6 +77,7 @@
                                     <td style="text-align:center"> - </td>
                                 @endif
                                 <td style="text-align:center">{{number_format($trans->currentBalance)}}</td>
+                                <td style="text-align:center">{{App\Models\Brand::where('id', $trans->brandId)->first()->name}}</td>
                                 <td style="text-align:center">{{$trans->description}}</td>
                                 <td style="text-align:center">{{$trans->clientName}}</td>
                                 {{-- @if((\Carbon\Carbon::parse($trans->date)->gte(\Carbon\Carbon::parse($yesterday))) || Auth::user()->admin)
