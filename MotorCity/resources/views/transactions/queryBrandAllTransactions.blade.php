@@ -55,7 +55,7 @@
                                 {{-- <th scope="col" style="text-align:center"><div>Custody Cash</div> <div>{{number_format($custodyCashBalance)}}</div></th> --}}
                                 <th scope="col" style="text-align:center"><div>Cash Dollar</div> <div>{{number_format($cashDollarBalance)}}</div></th>
                                 <th scope="col" style="text-align:center"><div>Checks</div> <div>{{number_format($checKBalance)}}</div></th>
-                                <th scope="col" style="text-align:center"><div>Visa</div> <div>{{number_format($visaBalance)}}</div></th>
+                                <th scope="col" style="text-align:center"><div>POS</div> <div>{{number_format($visaBalance)}}</div></th>
                                 <th scope="col" style="text-align:center"><div>Banks</div> <div>{{number_format($banksBalance)}}</div></th>
                                 <th scope="col" style="text-align:center"><div>Description</div> <div><br></div></th>
                                 <th scope="col" style="text-align:center"><div>Client Name</div> <div><br></div></th>

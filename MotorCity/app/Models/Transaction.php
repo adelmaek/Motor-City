@@ -178,6 +178,12 @@ class Transaction extends Model
     public static function transactionsToTransactionsRows($transactions)
     {
         $transactionsRows = [];
+        $totalCash = 0;
+        $totalCashDollar = 0;
+        $totalCustodyCash = 0;
+        $totalCheck = 0;
+        $totalVisa = 0;
+        $totalBank = 0;
         foreach($transactions as $trans)
         {
             $transRow = new TransactionRow($trans->date, $trans->description, $trans->clientName);
@@ -188,6 +194,8 @@ class Transaction extends Model
                     $transRow->cash = $trans->value;
                 else
                     $transRow->cash = - $trans->value;
+
+                $totalCash += $transRow->cash;
             }
             else if(!strcmp($account->type,"custodyCash"))
             {
@@ -195,6 +203,8 @@ class Transaction extends Model
                     $transRow->custodyCash = $trans->value;
                 else
                     $transRow->custodyCash = - $trans->value;
+
+                $totalCustodyCash += $transRow->custodyCash;
             }
             else if(!strcmp($account->type,"cashDollar"))
             {
@@ -202,6 +212,8 @@ class Transaction extends Model
                     $transRow->cashDollar = $trans->value;
                 else
                     $transRow->cashDollar = - $trans->value;
+
+                $totalCashDollar += $transRow->cashDollar;
             }
             else if(!strcmp($account->type,"check"))
             {
@@ -209,6 +221,8 @@ class Transaction extends Model
                     $transRow->check = $trans->value;
                 else
                     $transRow->check = - $trans->value;
+
+                $totalCheck += $transRow->check;
             }
             else if(!strcmp($account->type,"visa"))
             {
@@ -216,6 +230,8 @@ class Transaction extends Model
                     $transRow->visa = $trans->value;
                 else
                     $transRow->visa = - $trans->value;
+
+                $totalVisa += $transRow->visa;
             }
             else if(!strcmp($account->type,"bank"))
             {
@@ -223,11 +239,21 @@ class Transaction extends Model
                     $transRow->banks = $trans->value;
                 else
                     $transRow->banks = - $trans->value;
+                
+                $totalBank += $transRow->banks;
             }
             array_push($transactionsRows,$transRow);
         }
+        $transRow = new TransactionRow('', '', '');
+        $transRow->cash = $totalCash;
+        $transRow->cashDollar = $totalCashDollar;
+        $transRow->custodyCash = $totalCustodyCash;
+        $transRow->visa = $totalVisa;
+        $transRow->check = $totalCheck;
+        $transRow->banks = $totalBank;
+        return array($transactionsRows, $transRow);
         // $transactionsRows = json_encode($transactionsRows);
-        return $transactionsRows;
+        // return $transactionsRows;
     }
 
     // public static function getLatest100Transactions($brandId)

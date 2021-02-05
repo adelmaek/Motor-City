@@ -164,22 +164,17 @@ class TransactionController extends Controller
         $toDate = $request['toDateInput'];
         $transactions = Transaction::getTransactionAllAccounts($brandId, $fromDate, $toDate);
         
-        $brandCashBalanceAtToDate = Transaction::getBrandCurrentBalanceOfAccountTypeAtDate($brandId, 'cash', $toDate);
-        $brandCashDollarBalanceAtToDate = Transaction::getBrandCurrentBalanceOfAccountTypeAtDate($brandId, 'cashDollar', $toDate);
-        $brandCustodyCashBalanceAtToDate = Transaction::getBrandCurrentBalanceOfAccountTypeAtDate($brandId, 'custodyCash', $toDate);
-        $brandCheckBalanceAtToDate = Transaction::getBrandCurrentBalanceOfAccountTypeAtDate($brandId, 'check', $toDate);
-        $brandVisaBalanceAtToDate = Transaction::getBrandCurrentBalanceOfAccountTypeAtDate($brandId, 'visa', $toDate);
-        $brandBanksBalanceAtToDate = Transaction::getBrandCurrentBanksBalanceAtDate($brandId, $toDate);
+        $arrayOfTransactionRowsAndTotalRow = Transaction::transactionsToTransactionsRows($transactions);
+        $transactionsRows = $arrayOfTransactionRowsAndTotalRow[0];
+        $totals = $arrayOfTransactionRowsAndTotalRow[1];
 
-        $transactionsRows = Transaction::transactionsToTransactionsRows($transactions);
-        // Log::debug($transactionsRows);
         return view('transactions.queryBrandAllTransactions',["transactionsRows"=>$transactionsRows,
-                                                            "cashBalance"=>$brandCashBalanceAtToDate,
-                                                            "cashDollarBalance"=>$brandCashDollarBalanceAtToDate,
-                                                            "custodyCashBalance"=>$brandCustodyCashBalanceAtToDate,
-                                                            "checKBalance"=>$brandCheckBalanceAtToDate,
-                                                            "visaBalance"=>$brandVisaBalanceAtToDate,
-                                                            "banksBalance"=>$brandBanksBalanceAtToDate,
+                                                            "cashBalance"=>$totals->cash,
+                                                            "cashDollarBalance"=>$totals->cashDollar,
+                                                            "custodyCashBalance"=>$totals->custodyCash,
+                                                            "checKBalance"=>$totals->check,
+                                                            "visaBalance"=>$totals->visa,
+                                                            "banksBalance"=>$totals->banks,
                                                             "brands"=>$brands,
                                                             "today"=>$today]);
     }
