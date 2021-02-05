@@ -76,6 +76,7 @@
                                 <th scope="col" style="text-align:center">Withdrawal</th>
                                 <th scope="col" style="text-align:center">Current Balance</th>
                                 <th scope="col" style="text-align:center">Brand</th>
+                                <th scope="col" style="text-align:center">From</th>
                                 <th scope="col" style="text-align:center">Description</th>
                                 <th scope="col" style="text-align:center">Client</th>
                                 @if(!strcmp("check",$accountType))
@@ -103,6 +104,7 @@
                                 @endif
                                 <td style="text-align:center">{{number_format($trans->currentBalance)}}</td>
                                 <td style="text-align:center">{{App\Models\Brand::where('id', $trans->brandId)->first()->name}}</td>
+                                <td style="text-align:center">{{$trans->fromBankName}}</td>
                                 <td style="text-align:center">{{$trans->description}}</td>
                                 <td style="text-align:center">{{$trans->clientName}}</td>
                                 @if(!strcmp("check",$accountType))

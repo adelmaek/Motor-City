@@ -59,7 +59,7 @@
                                     <input type="number" step ="0.01" class="form-control" id="valueInput" name="valueInput" placeholder="Value" required style="min-width: 100px;" >
                                   </div>
                             </div>
-                            <div class="col-md-4" id="brandDiv" name="brandDiv">
+                            {{-- <div class="col-md-4" id="brandDiv" name="brandDiv">
                                 <div class="form-group">
                                     <label for="brandInput">Brand</label>
                                     <select class="form-control" style="height: 42px;" id="brandInput" name="brandInput" >
@@ -69,7 +69,7 @@
                                         @endforeach             
                                     </select>
                                   </div>
-                            </div>
+                            </div> --}}
                         </div>
                         {{-- <button type="submit" class="btn btn-dark">Submit</button> --}}
                          <input type="submit" name="submit" class="btn btn-dark btn-md" value="Submit">
@@ -121,7 +121,7 @@
                 $('#posDiv').hide();
                 $('#brandDiv').hide();
                 $("#posBankAccountInput").prop('required',false);
-                $('#brandInput').prop('required',false);
+                // $('#brandInput').prop('required',false);
             }
             else if (!selectedAccountType.localeCompare("visa"))
             {
@@ -129,7 +129,7 @@
                 $('#posDiv').show();
                 $("#posBankAccountInput").prop('required',true);
                 $('#brandDiv').show();
-                $('#brandInput').prop('required',true);
+                // $('#brandInput').prop('required',true);
                 $("#bankNameInput").prop('required',false);
             }               
         });

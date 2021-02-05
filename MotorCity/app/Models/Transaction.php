@@ -28,7 +28,7 @@ class Transaction extends Model
         'clientName',
         'currentBalance'
     ];
-    public function init($accountId=null, $userId=null, $type=null, $value=null, $date=null, $fromBankId=null, $checkNumber=null,$validityDate=null, $settled=null, $confirmSettling =null,$checKToBankId,$checkSettlingDate, $description=null, $clientName=null, $brandId)
+    public function init($accountId=null, $userId=null, $type=null, $value=null, $date=null, $fromBankName=null, $checkNumber=null,$validityDate=null, $settled=null, $confirmSettling =null,$checKToBankId,$checkSettlingDate, $description=null, $clientName=null, $brandId)
     {
         $this->brandId = $brandId;
         $this->accountId = $accountId;
@@ -36,7 +36,7 @@ class Transaction extends Model
         $this->type = $type;
         $this->value = $value;
         $this->date = $date;
-        $this->fromBankId = $fromBankId;
+        $this->fromBankName = $fromBankName;
         $this->checkNumber = $checkNumber;
         $this->checkValidityDate = $validityDate;
         $this->settled = $settled;

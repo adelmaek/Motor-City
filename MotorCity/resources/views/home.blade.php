@@ -102,14 +102,20 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="checkIsFromBankInput">اسم البنك</label>
-                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="checkIsFromBankInput" name="checkIsFromBankInput" >
+                                    <input list="checkIsFromBankInputList" class="form-control" style="height: 42px;border: 2px solid black;" id="checkIsFromBankInput" name="checkIsFromBankInput" placeholder="Bank name" >
+                                    <datalist id="checkIsFromBankInputList">
+                                        @foreach ($banks as $bank)
+                                            <option value="{{$bank->name}}">{{$bank->name}}</option>
+                                        @endforeach
+                                    </datalist>
+                                    {{-- <select class="form-control" style="height: 42px;border: 2px solid black;" id="checkIsFromBankInput" name="checkIsFromBankInput" >
                                         <option value="" disabled selected>From bank</option>
                                         @foreach ($banks as $bank)
-                                            <option value="{{$bank->id}}">{{$bank->name}}</option>
+                                            <option value="{{$bank->name}}">{{$bank->name}}</option>
                                         @endforeach
                                         <option value="-1">Others</option>
-                                    </select>
-                                  </div>
+                                    </select> --}}
+                                </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
