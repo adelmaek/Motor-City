@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Account;
 use App\Models\Brand;
 use App\Models\Transaction;
+use App\Models\Bank;
 use App\Models\TransactionRow;
 use Carbon\Carbon;
 use Log;
@@ -28,6 +29,7 @@ class TransactionController extends Controller
         $account=null;
         $toAccount=null;
         $fromAccount=null;
+        $description = $request['noteInput'];
         if(!strcmp($balanceInput,"cash") || !strcmp($balanceInput,"custodyCash") || !strcmp($balanceInput,"cashDollar") || !strcmp($balanceInput,"check"))
         {
             $account = Account::where([['type','=',$balanceInput],['brandId','=',$brandId]])->first();
@@ -48,6 +50,7 @@ class TransactionController extends Controller
         elseif(!strcmp($balanceInput,"banks"))
         {
             $account = Account::where('id','=',$request['bankAccountId'])->first();
+            $description = " (تحويل بنك - " .  Bank::where('id', $account->bankID)->first()->name . ") " . $description;
         }
         elseif(!strcmp($balanceInput,"pos"))
         {
@@ -68,7 +71,7 @@ class TransactionController extends Controller
         else //Bank transaction or POS transaction
             $transaction = new Transaction();
 
-        DB::transaction(function () use($balanceInput, $transaction, $account, $request,$brandId,$fromTransaction,$toTransaction,$fromAccount,$toAccount){
+        DB::transaction(function () use($balanceInput, $transaction, $account, $request,$brandId,$fromTransaction,$toTransaction,$fromAccount,$toAccount,$description){
             if(!strcmp($balanceInput,"bankToBank"))
             {
                 if(($fromTransaction===null || $toTransaction===null || $fromAccount===null ||$toAccount===null))
@@ -87,14 +90,14 @@ class TransactionController extends Controller
             }
             
             if(!strcmp($balanceInput,"check"))
-                $transaction->init($account->id, Auth::user()->id, $request['typeInput'], $request['valueInput'], $request['dateInput'], $request['checkIsFromBankInput'], $request['checkNumberInput'], $request['checkValidityDateInput'], false,false,null,null,$request['noteInput'], $request['clientNameInput'], $brandId);
+                $transaction->init($account->id, Auth::user()->id, $request['typeInput'], $request['valueInput'], $request['dateInput'], $request['checkIsFromBankInput'], $request['checkNumberInput'], $request['checkValidityDateInput'], false,false,null,null,$description, $request['clientNameInput'], $brandId);
             elseif(!strcmp($balanceInput,"bankToBank"))
             {
-                $fromTransaction->init($fromAccount->id, Auth::user()->id, "sub", $request['valueInput'], $request['dateInput'], null, null,null ,null,null,null,null,$request['noteInput'], $request['clientNameInput'], $brandId);
-                $toTransaction->init($toAccount->id, Auth::user()->id, "add", $request['valueInput'], $request['dateInput'], null, null,null ,null,null,null,null,$request['noteInput'], $request['clientNameInput'], $brandId);
+                $fromTransaction->init($fromAccount->id, Auth::user()->id, "sub", $request['valueInput'], $request['dateInput'], null, null,null ,null,null,null,null,$description, $request['clientNameInput'], $brandId);
+                $toTransaction->init($toAccount->id, Auth::user()->id, "add", $request['valueInput'], $request['dateInput'], null, null,null ,null,null,null,null,$description, $request['clientNameInput'], $brandId);
             }
             else
-                $transaction->init($account->id, Auth::user()->id, $request['typeInput'], $request['valueInput'], $request['dateInput'], null, null,null ,null,null,null,null,$request['noteInput'], $request['clientNameInput'], $brandId);
+                $transaction->init($account->id, Auth::user()->id, $request['typeInput'], $request['valueInput'], $request['dateInput'], null, null,null ,null,null,null,null,$description, $request['clientNameInput'], $brandId);
             
             $transSaved=0;
             $fromTransSaved=0;

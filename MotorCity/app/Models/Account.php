@@ -45,7 +45,7 @@ class Account extends Model
     public static function getPosAccounts()
     {
         $user = auth()->user();
-        if(!$user)
+        if(!$user)                  
             return Account::where('type',"visa")->get();
         if($user->admin == 0) 
             $posAccounts = Account::where('type',"visa")->get();
