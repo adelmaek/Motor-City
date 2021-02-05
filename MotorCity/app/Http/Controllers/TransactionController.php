@@ -45,6 +45,14 @@ class TransactionController extends Controller
             $fromAccount = Account::where('id', $request['fromBank'])->first();
             $toAccount = Account::where('id', $request['toBank'])->first();
         }
+        elseif(!strcmp($balanceInput,"banks"))
+        {
+            $account = Account::where('id','=',$request['bankAccountId'])->first();
+        }
+        elseif(!strcmp($balanceInput,"pos"))
+        {
+            $account = Account::where('id','=',$request['posAccountId'])->first();
+        }
         else
             $account = Account::where('id','=',$balanceInput)->first();
 
@@ -200,7 +208,7 @@ class TransactionController extends Controller
             $account = Account::where("type", $accountType)->first();
         else
             $account = Account::where('brandID',$brandId)->where("type", $accountType)->first();
-            
+
         if($account === null)
             return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType,'transactions'=>[], 'brands'=>$brands, "todayDate"=>$todayDate, "bankAccounts"=>$bankAccounts]);
 

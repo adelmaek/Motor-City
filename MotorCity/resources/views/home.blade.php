@@ -36,14 +36,16 @@
                                         <option value="cashDollar">$</option>
                                         {{-- <option value="custodyCash">Custody cash</option> --}}
                                         <option value="check">شيكات</option>
+                                        <option value="banks">تحويل بنكي</option>
+                                        <option value="pos">POS</option>
                                         {{-- <option value="visa">POS</option> --}}
                                         {{-- <option value="bankToBank">Bank to bank</option> --}}
-                                        @foreach ($bankAccounts as $bankAccount)
+                                        {{-- @foreach ($bankAccounts as $bankAccount)
                                             <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id', $bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>
                                         @endforeach
                                         @foreach ($posAccounts as $posAccount)
                                             <option value="{{$posAccount->id}}">{{$posAccount->name}}</option>
-                                        @endforeach
+                                        @endforeach --}}
                                     </select>
                                   </div>
                             </div>
@@ -57,6 +59,30 @@
                                     </select>
                                   </div>
                             </div>                            
+                        </div>
+                        <div class="row" id="banksList">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="bankAccountId">Bank account</label>
+                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="bankAccountId" name="bankAccountId" >
+                                        @foreach ($bankAccounts as $bankAccount)
+                                            <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id', $bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" id="posList">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="posAccountId">POS account</label>
+                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="posAccountId" name="posAccountId" >
+                                        @foreach ($posAccounts as $posAccount)
+                                            <option value="{{$posAccount->id}}">{{$posAccount->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">
@@ -257,6 +283,8 @@
         // $("select.balanceInput").change(function(){
         //     $("#formValidationAlert").hide()
         // });
+        $("#banksList").hide()
+        $("#posList").hide()
         $("select.balanceInput").change(function(){
             var selectedBalance = $(this).children("option:selected").val();
             if(!selectedBalance.localeCompare("check"))
@@ -268,6 +296,27 @@
                 $('#bankToBankSpecialInput').show();
             else
                 $('#bankToBankSpecialInput').hide();
+
+            if(!selectedBalance.localeCompare("banks"))
+            {
+                $("#banksList").show()
+                $('#banksList').prop('required',true);
+            }
+            else
+            {
+                $("#banksList").hide()
+                $('#banksList').prop('required',false);
+            }
+            if(!selectedBalance.localeCompare("pos"))
+            {
+                $("#posList").show()
+                $('#posList').prop('required',true);
+            }
+            else
+            {
+                $("#posList").hide()
+                $('#posList').prop('required',false);
+            }
         });
         // $("#toBank").change(function(){
         //     var toBank = $("#toBank").val();
