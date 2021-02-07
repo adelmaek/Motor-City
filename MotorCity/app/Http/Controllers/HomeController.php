@@ -42,6 +42,8 @@ class HomeController extends Controller
             {
                 $accountName = str_replace(":"," ", $acc->name);
                 $accountName = str_replace("posCommission", "POS commission", $accountName);
+                $accountName = str_replace("cashDollar", "$", $accountName);
+
             }
             $acc->setAttribute('accountName', $accountName);
         }
@@ -63,6 +65,7 @@ class HomeController extends Controller
                     $accountType = 'check';
                 $accountName = str_replace(":"," ", $account->name);
                 $accountName = str_replace("posCommission", "POS commission", $accountName);
+                $accountName = str_replace("cashDollar", "$", $accountName);
             }
 
             $transaction->setAttribute('accountName',$accountName);

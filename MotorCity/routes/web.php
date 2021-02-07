@@ -50,4 +50,5 @@ Route::get('/queryPosAccountTransaction/{accountId}',[App\Http\Controllers\Trans
 Route::post('/queryPosAccountTransaction/{accountId}',[App\Http\Controllers\TransactionController::class, 'postQueryPosAccountTransaction'])->name('queryPosAccountTransaction')->middleware('auth');
 Route::post('/settlePosTransactions',[App\Http\Controllers\TransactionController::class, 'postSettlePosTransactions'])->name('settlePosTransactions')->middleware('auth');
 Route::post('/confirmSettlingPos/{transactionId}',[App\Http\Controllers\TransactionController::class, 'postConfirmSettlingPos'])->name('confirmSettlingPos')->middleware('auth');
+Route::get('/search',[App\Http\Controllers\TransactionController::class, 'getSearchTransactions'])->name('search')->middleware('auth');
 

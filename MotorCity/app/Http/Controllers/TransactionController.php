@@ -474,4 +474,10 @@ class TransactionController extends Controller
 
         return redirect()->back();
     }
+    public function getSearchTransactions(Request $request)
+    {
+        $transactions = Transaction::where('clientName','like', '%'.$request["searchInput"].'%')->orWhere('value', $request["searchInput"])->get();
+
+        return view('transactions.searchResults',["transactions"=>$transactions]);
+    }
 }

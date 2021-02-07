@@ -61,7 +61,14 @@
                     @else
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{route('queryBrandAllTransactions')}}">All Transations</a>
+                            <form class="app-search d-none d-md-block d-md-block" action="{{route('search')}}" method="get">
+                                <input type="text" class="form-control" id="searchInput" name="searchInput" placeholder="Search & enter">
+                            </form>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" class="form-control" href="{{route('queryBrandAllTransactions')}}">All Transations</a>
                         </li>
                         <li class="nav-item dropdown">
                             <div class="dropdown">
