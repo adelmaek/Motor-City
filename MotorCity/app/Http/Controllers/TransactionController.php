@@ -41,6 +41,8 @@ class TransactionController extends Controller
                 $account->init($name, $balanceInput, 0, null, $brandId);
                 $account->save();
             }
+            if(!strcmp($balanceInput,"cash") && $request["cashWithdrawalReason"] != null)
+                $description = " (" . $request["cashWithdrawalReason"]  . ") " . $description;
         }
         elseif(!strcmp($balanceInput,"bankToBank"))
         {

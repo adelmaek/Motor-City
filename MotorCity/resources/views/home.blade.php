@@ -84,6 +84,16 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row" id="cashWithdrawalReasonDiv">
+                            <div class="col-md-6">
+                                <label for="cashWithdrawalReason">Withdrawal reason</label>
+                                <input list="cashWithdrawalReasonList" class="form-control" style="height: 42px;border: 2px solid black;" id="cashWithdrawalReason" name="cashWithdrawalReason" placeholder="Reason" >
+                                <datalist id="cashWithdrawalReasonList">
+                                        <option value="bank">bank</option>
+                                        <option value="refund">refund</option>
+                                </datalist>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -293,6 +303,7 @@
         // });
         $("#banksList").hide()
         $("#posList").hide()
+        $("#cashWithdrawalReasonDiv").hide()
         $("select.balanceInput").change(function(){
             var selectedBalance = $(this).children("option:selected").val();
             if(!selectedBalance.localeCompare("check"))
@@ -324,6 +335,35 @@
             {
                 $("#posList").hide()
                 $('#posList').prop('required',false);
+            }
+            if(!selectedBalance.localeCompare("cash"))
+            {
+                if(!($("#typeInput").val()).localeCompare('sub'))
+                {
+                    $("#cashWithdrawalReasonDiv").show()
+                }
+                else
+                {
+                    $("#cashWithdrawalReasonDiv").hide()   
+                }
+            }
+            else
+            {
+                $("#cashWithdrawalReasonDiv").hide()   
+            }
+        });
+        $("#typeInput").change(function(){
+            
+            if(!($("#typeInput").val()).localeCompare('sub'))
+            {
+                if(!($("#balanceInput").val()).localeCompare('cash'))
+                    $("#cashWithdrawalReasonDiv").show()
+                else
+                    $("#cashWithdrawalReasonDiv").hide()
+            }
+            else
+            {
+                $("#cashWithdrawalReasonDiv").hide()   
             }
         });
         // $("#toBank").change(function(){
