@@ -326,6 +326,8 @@ class Transaction extends Model
     public static function getCurrentMonthTransactions($accountId)
     {
         $account = Account::where('id', $accountId)->first();
+        if($account ===null)
+            return [];
         if(Auth::user()->admin)
         {
             return Transaction::where('accountId', $account->id)->whereYear('date', Carbon::now('Egypt')->year)->whereMonth('date', Carbon::now('Egypt')->month)->get();

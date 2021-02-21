@@ -193,7 +193,8 @@ class TransactionController extends Controller
         if(!strcmp("posCommission",$accountType))
         {
             $posAccount = Account::where('type', $accountType)->first();
-            $transactions = Transaction::getCurrentMonthTransactions($posAccount->id);
+            if($posAccount)
+                $transactions = Transaction::getCurrentMonthTransactions($posAccount->id);
 
         }
         else
