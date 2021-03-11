@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+{{-- <div class="alert alert-danger" role="alert" id="formValidationAlert">
+</div> --}}
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -31,17 +33,19 @@
                                     <select class="form-control balanceInput" style="height: 42px;border: 2px solid black;" id="balanceInput" name="balanceInput" required>
                                         <option value="" disabled selected>Select Balance</option>
                                         <option value="cash">Cash</option>
-                                        <option value="cashDollar">Cash $</option>
+                                        <option value="cashDollar">$</option>
                                         {{-- <option value="custodyCash">Custody cash</option> --}}
-                                        <option value="check">Check</option>
+                                        <option value="check">شيكات</option>
+                                        <option value="banks">تحويل بنكي</option>
+                                        <option value="pos">POS</option>
                                         {{-- <option value="visa">POS</option> --}}
-                                        <option value="bankToBank">Bank to bank</option>
-                                        @foreach ($bankAccounts as $bankAccount)
+                                        {{-- <option value="bankToBank">Bank to bank</option> --}}
+                                        {{-- @foreach ($bankAccounts as $bankAccount)
                                             <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id', $bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>
                                         @endforeach
                                         @foreach ($posAccounts as $posAccount)
                                             <option value="{{$posAccount->id}}">{{$posAccount->name}}</option>
-                                        @endforeach
+                                        @endforeach --}}
                                     </select>
                                   </div>
                             </div>
@@ -56,6 +60,40 @@
                                   </div>
                             </div>                            
                         </div>
+                        <div class="row" id="banksList">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="bankAccountId">Bank account</label>
+                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="bankAccountId" name="bankAccountId" >
+                                        @foreach ($bankAccounts as $bankAccount)
+                                            <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id', $bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" id="posList">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="posAccountId">POS account</label>
+                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="posAccountId" name="posAccountId" >
+                                        @foreach ($posAccounts as $posAccount)
+                                            <option value="{{$posAccount->id}}">{{$posAccount->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" id="cashWithdrawalReasonDiv">
+                            <div class="col-md-6">
+                                <label for="cashWithdrawalReason">Withdrawal reason</label>
+                                <input list="cashWithdrawalReasonList" class="form-control" style="height: 42px;border: 2px solid black;" id="cashWithdrawalReason" name="cashWithdrawalReason" placeholder="Reason" >
+                                <datalist id="cashWithdrawalReasonList">
+                                        <option value="bank">bank</option>
+                                        <option value="refund">refund</option>
+                                </datalist>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -66,40 +104,46 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="dateInput">Date</label>
-                                    <input type="date" class="form-control" id="dateInput" name="dateInput" style="height: 42px;border: 2px solid black;" value="{{$today}}"  required>     
+                                    <input type="date" class="form-control" id="dateInput" name="dateInput" style="height: 42px;border: 2px solid black;" value="{{$today}}" max="{{$today}}"  required>     
                                 </div>
                             </div>
                         </div>
                         <div class="row" id="checkSpecialInput">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="checkIsFromBankInput">Check form bank</label>
-                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="checkIsFromBankInput" name="checkIsFromBankInput" >
+                                    <label for="checkIsFromBankInput">اسم البنك</label>
+                                    <input list="checkIsFromBankInputList" class="form-control" style="height: 42px;border: 2px solid black;" id="checkIsFromBankInput" name="checkIsFromBankInput" placeholder="Bank name" >
+                                    <datalist id="checkIsFromBankInputList">
+                                        @foreach ($banks as $bank)
+                                            <option value="{{$bank->name}}">{{$bank->name}}</option>
+                                        @endforeach
+                                    </datalist>
+                                    {{-- <select class="form-control" style="height: 42px;border: 2px solid black;" id="checkIsFromBankInput" name="checkIsFromBankInput" >
                                         <option value="" disabled selected>From bank</option>
                                         @foreach ($banks as $bank)
-                                            <option value="{{$bank->id}}">{{$bank->name}}</option>
+                                            <option value="{{$bank->name}}">{{$bank->name}}</option>
                                         @endforeach
                                         <option value="-1">Others</option>
-                                    </select>
-                                  </div>
+                                    </select> --}}
+                                </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="checkNumberInput">Check number</label>
+                                    <label for="checkNumberInput">رقم الشيك</label>
                                     <input type="text" class="form-control" id="checkNumberInput" name="checkNumberInput" placeholder="Check Number"  style="min-width: 100px;border: 2px solid black;" >
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="dateInput">Validity Date</label>
-                                    <input type="date" class="form-control" id="checkValidityDateInput" name="checkValidityDateInput" style="height: 42px;border: 2px solid black;" >  
+                                    <label for="checkValidityDateInput">تاريخ الشيك</label>
+                                    <input type="date" class="form-control" id="checkValidityDateInput" value="{{$today}}" name="checkValidityDateInput" style="height: 42px;border: 2px solid black;" >  
                                 </div>
                             </div>
                         </div>
                         <div class="row" id="bankToBankSpecialInput">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="checkIsFromBankInput">Form bank</label>
+                                    <label for="fromBank">Form bank</label>
                                     <select class="form-control" style="height: 42px;border: 2px solid black;" id="fromBank" name="fromBank" >
                                         <option value="" disabled selected>From bank</option>
                                         @foreach ($bankAccounts as $bankAccount)
@@ -110,7 +154,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="checkIsFromBankInput">To bank</label>
+                                    <label for="toBank">To bank</label>
                                     <select class="form-control" style="height: 42px;border: 2px solid black;" id="toBank" name="toBank" >
                                         <option value="" disabled selected>To bank</option>
                                         @foreach ($bankAccounts as $bankAccount)
@@ -179,6 +223,7 @@
                             <tr>
                                 <th scope="col" style="text-align:center">Date</th>
                                 <th scope="col" style="text-align:center">Type</th>
+                                <th scope="col" style="text-align:center">Brand</th>
                                 <th scope="col" style="text-align:center">Account</th>
                                 <th scope="col" style="text-align:center">Value</th>
                                 <th scope="col" style="text-align:center">Description</th>
@@ -188,13 +233,20 @@
                         </thead>
                         <tbody>
                         @foreach ($transactions as $trans)
-                            <tr>
+                            @if(!strcmp($trans->accountType,"check"))
+                                <tr style="background-color:#d8d52a">
+                            @elseif(!strcmp($trans->accountType,"bank"))
+                                <tr style="background-color:#1c9e38">
+                            @else
+                                <tr>
+                            @endif
                                 <td style="text-align:center">{{$trans->date}}</td>
                                 @if(!strcmp('add', $trans->type))
-                                    <td style="text-align:center">Deposite</td>
+                                    <td style="text-align:center">Deposit</td>
                                 @else
                                     <td style="text-align:center">Withdrawal</td>
                                 @endif
+                                <td style="text-align:center">{{App\Models\Brand::where('id', $trans->brandId)->first()->name}}</td>
                                 <td style="text-align:center">{{$trans->accountName}}</td> 
                                 <td style="text-align:center">{{number_format($trans->value)}}</td> 
                                 <td style="text-align:center" onclick="editDescription({{$trans->id}});">{{$trans->description}}</td>
@@ -244,6 +296,14 @@
 @section('extraJS')
 <script>
     $(document).ready(function(){
+
+        // $("#formValidationAlert").hide()
+        // $("select.balanceInput").change(function(){
+        //     $("#formValidationAlert").hide()
+        // });
+        $("#banksList").hide()
+        $("#posList").hide()
+        $("#cashWithdrawalReasonDiv").hide()
         $("select.balanceInput").change(function(){
             var selectedBalance = $(this).children("option:selected").val();
             if(!selectedBalance.localeCompare("check"))
@@ -255,7 +315,83 @@
                 $('#bankToBankSpecialInput').show();
             else
                 $('#bankToBankSpecialInput').hide();
+
+            if(!selectedBalance.localeCompare("banks"))
+            {
+                $("#banksList").show()
+                $('#banksList').prop('required',true);
+            }
+            else
+            {
+                $("#banksList").hide()
+                $('#banksList').prop('required',false);
+            }
+            if(!selectedBalance.localeCompare("pos"))
+            {
+                $("#posList").show()
+                $('#posList').prop('required',true);
+            }
+            else
+            {
+                $("#posList").hide()
+                $('#posList').prop('required',false);
+            }
+            if(!selectedBalance.localeCompare("cash"))
+            {
+                if(!($("#typeInput").val()).localeCompare('sub'))
+                {
+                    $("#cashWithdrawalReasonDiv").show()
+                }
+                else
+                {
+                    $("#cashWithdrawalReasonDiv").hide()   
+                }
+            }
+            else
+            {
+                $("#cashWithdrawalReasonDiv").hide()   
+            }
         });
+        $("#typeInput").change(function(){
+            
+            if(!($("#typeInput").val()).localeCompare('sub'))
+            {
+                if(!($("#balanceInput").val()).localeCompare('cash'))
+                    $("#cashWithdrawalReasonDiv").show()
+                else
+                    $("#cashWithdrawalReasonDiv").hide()
+            }
+            else
+            {
+                $("#cashWithdrawalReasonDiv").hide()   
+            }
+        });
+        // $("#toBank").change(function(){
+        //     var toBank = $("#toBank").val();
+        //     var fromBank = $( "#fromBank" ).val();
+        //     if(fromBank === toBank)
+        //     {
+        //         $("#formValidationAlert").html("Invalid transaction from bank to same bank.")
+        //         $("#formValidationAlert").show()
+        //     }
+        //     else
+        //         $("#formValidationAlert").hide()
+                
+        // });
+
+        // $("#fromBank").change(function(){
+        //     var toBank = $("#toBank").val();
+        //     var fromBank = $( "#fromBank" ).val();
+        //     if(fromBank === toBank)
+        //     {
+        //         $("#formValidationAlert").html("Invalid transaction from bank to same bank.")
+        //         $("#formValidationAlert").show()
+        //     }
+        //     else
+        //         $("#formValidationAlert").hide()
+                
+        // });
+       
     });
 </script>
 <script>
@@ -287,7 +423,10 @@
                 {
                 extend: 'excel',
                 title: 'Motor-City-Transactions',
-                footer: true
+                footer: true,
+                exportOptions: {
+                columns: ':not(:last-child)',
+                }
             }
         ]   ,
         "scrollY":"390px",

@@ -19,6 +19,8 @@
                         <h3 class="card-title">Query Checks Transactions</h3>
                     @elseif(!strcmp('visa', $accountType))
                         <h3 class="card-title">Query Visa Transactions</h3>
+                    @elseif(!strcmp('posCommission', $accountType))
+                        <h3 class="card-title">Query POS Commissions Transactions</h3>
                     @endif
                     <form action="{{route('queryBrandAccountTransaction',[$accountType])}}" method="post">
                         <div class="row">
@@ -39,7 +41,11 @@
                                 <div class="form-group">
                                     <label for="brandIdInput">Brand</label>
                                     <select class="form-control" style="height: 42px;" id="brandIdInput" name="brandIdInput" required>
-                                        <option value="" disabled selected>Choose brand</option>
+                                        @if(!strcmp("posCommission", $accountType))
+                                            <option value="all" selected>All</option>
+                                        @else
+                                            <option value="" disabled selected>Choose brand</option>
+                                        @endif
                                         @foreach ($brands as $brand)
                                             <option value="{{$brand->id}}">{{$brand->name}}</option>
                                         @endforeach                                        
@@ -66,15 +72,17 @@
                                 @if(!strcmp("check",$accountType))
                                     <th scope="col" style="text-align:center">Validity Date</th>
                                 @endif
-                                <th scope="col" style="text-align:center">Deposite</th>
+                                <th scope="col" style="text-align:center">Deposit</th>
                                 <th scope="col" style="text-align:center">Withdrawal</th>
                                 <th scope="col" style="text-align:center">Current Balance</th>
+                                <th scope="col" style="text-align:center">Brand</th>
+                                <th scope="col" style="text-align:center">From</th>
                                 <th scope="col" style="text-align:center">Description</th>
                                 <th scope="col" style="text-align:center">Client</th>
                                 @if(!strcmp("check",$accountType))
                                     <th scope="col" style="text-align:center">Settle</th>
                                 @endif
-                                <th scope="col" style="text-align:center">Delete</th>
+                                {{-- <th scope="col" style="text-align:center">Delete</th> --}}
                             </tr>
                         </thead>
                         <tbody>
@@ -95,6 +103,8 @@
                                     <td style="text-align:center"> - </td>
                                 @endif
                                 <td style="text-align:center">{{number_format($trans->currentBalance)}}</td>
+                                <td style="text-align:center">{{App\Models\Brand::where('id', $trans->brandId)->first()->name}}</td>
+                                <td style="text-align:center">{{$trans->fromBankName}}</td>
                                 <td style="text-align:center">{{$trans->description}}</td>
                                 <td style="text-align:center">{{$trans->clientName}}</td>
                                 @if(!strcmp("check",$accountType))
@@ -120,7 +130,7 @@
                                         @endif
                                     </td>
                                 @endif
-                                @if(\Carbon\Carbon::parse($trans->date)->gte(\Carbon\Carbon::parse($yesterday))|| Auth::user()->admin)
+                                {{-- @if(\Carbon\Carbon::parse($trans->date)->gte(\Carbon\Carbon::parse($yesterday))|| Auth::user()->admin)
                                     <td style="text-align:center">
                                         <a class="btn btn-danger delete-confirm " style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('deleteTransaction',[$trans->id])}}" role="button" >Delete</a>
                                     </td>
@@ -128,7 +138,7 @@
                                     <td style="text-align:center">
                                         <a class="btn btn-danger delete-confirm disabled" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('deleteTransaction',[$trans->id])}}" role="button" >Delete</a>
                                     </td>
-                                @endif
+                                @endif --}}
                             </tr>
                         @endforeach
                             <div class="modal fade" id="settlingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -154,8 +164,8 @@
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label for="settlingBankInput">Settling Bank</label>
-                                                        <select class="form-control" style="height: 42px;" id="settlingBankInput" name="settlingBankInput" >
-                                                            <option value="" disabled selected>Settle to bank account</option>
+                                                        <select class="form-control" style="height: 42px;" id="settlingBankInput" name="settlingBankInput" required>
+                                                            {{-- <option value="" disabled selected>Settle to bank account</option> --}}
                                                             @foreach ($bankAccounts as $bankAccount)
                                                                 <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id',$bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>
                                                             @endforeach

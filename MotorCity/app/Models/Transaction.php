@@ -8,6 +8,7 @@ use App\Models\TransactionRow;
 use Log;
 use DB;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class Transaction extends Model
 {
@@ -27,7 +28,7 @@ class Transaction extends Model
         'clientName',
         'currentBalance'
     ];
-    public function init($accountId=null, $userId=null, $type=null, $value=null, $date=null, $fromBankId=null, $checkNumber=null,$validityDate=null, $settled=null, $confirmSettling =null,$checKToBankId,$checkSettlingDate, $description=null, $clientName=null, $brandId)
+    public function init($accountId=null, $userId=null, $type=null, $value=null, $date=null, $fromBankName=null, $checkNumber=null,$validityDate=null, $settled=null, $confirmSettling =null,$checKToBankId,$checkSettlingDate, $description=null, $clientName=null, $brandId)
     {
         $this->brandId = $brandId;
         $this->accountId = $accountId;
@@ -35,7 +36,7 @@ class Transaction extends Model
         $this->type = $type;
         $this->value = $value;
         $this->date = $date;
-        $this->fromBankId = $fromBankId;
+        $this->fromBankName = $fromBankName;
         $this->checkNumber = $checkNumber;
         $this->checkValidityDate = $validityDate;
         $this->settled = $settled;
@@ -106,18 +107,34 @@ class Transaction extends Model
         return $transactions;
     }
 
-    public static function getTransactionOfAccount ( $accountId, $brandId, $fromDate=null, $toDate=null)
+    // public static function getTransactionOfAccount ( $accountId, $brandId, $fromDate=null, $toDate=null)
+    // {
+    //     $transactions = [];
+    //     // Log::info('getTransactionOfAccount', ['accountId' => $accountId, "brandId"=>$brandId,"fromDate"=>$fromDate,"toDate"=>$toDate]);
+    //     if($fromDate === null && $toDate === null)
+    //         $transactions = Transaction::where([['accountId',$accountId],['brandId',$brandId]])->orderBy('date','Asc')->get();
+    //     else if($fromDate != null && $toDate === null)
+    //         $transactions = Transaction::where([['accountId',$accountId],['brandId',$brandId]])->whereDate('date','>=',$fromDate)->orderBy('date','Asc')->get();
+    //     else if ($fromDate === null && $toDate != null)
+    //         $transactions = Transaction::where([['accountId',$accountId],['brandId',$brandId]])->whereDate('date','<=',$toDate)->orderBy('date','Asc')->get();
+    //     else
+    //         $transactions = Transaction::where([['accountId',$accountId],['brandId',$brandId]])->whereDate('date','>=',$fromDate)->whereDate('date','<=', $toDate)->orderBy('date','Asc')->get();
+        
+    //     return $transactions;
+    // }
+
+    public static function getTransactionOfAccount ( $accountId, $brandIds, $fromDate=null, $toDate=null)
     {
         $transactions = [];
         // Log::info('getTransactionOfAccount', ['accountId' => $accountId, "brandId"=>$brandId,"fromDate"=>$fromDate,"toDate"=>$toDate]);
         if($fromDate === null && $toDate === null)
-            $transactions = Transaction::where([['accountId',$accountId],['brandId',$brandId]])->orderBy('date','Asc')->get();
+            $transactions = Transaction::where('accountId',$accountId)->whereIn('brandId', $brandIds)->orderBy('date','Asc')->get();
         else if($fromDate != null && $toDate === null)
-            $transactions = Transaction::where([['accountId',$accountId],['brandId',$brandId]])->whereDate('date','>=',$fromDate)->orderBy('date','Asc')->get();
+            $transactions = Transaction::where('accountId',$accountId)->whereIn('brandId', $brandIds)->whereDate('date','>=',$fromDate)->orderBy('date','Asc')->get();
         else if ($fromDate === null && $toDate != null)
-            $transactions = Transaction::where([['accountId',$accountId],['brandId',$brandId]])->whereDate('date','<=',$toDate)->orderBy('date','Asc')->get();
+            $transactions = Transaction::where('accountId',$accountId)->whereIn('brandId', $brandIds)->whereDate('date','<=',$toDate)->orderBy('date','Asc')->get();
         else
-            $transactions = Transaction::where([['accountId',$accountId],['brandId',$brandId]])->whereDate('date','>=',$fromDate)->whereDate('date','<=', $toDate)->orderBy('date','Asc')->get();
+            $transactions = Transaction::where('accountId',$accountId)->whereIn('brandId', $brandIds)->whereDate('date','>=',$fromDate)->whereDate('date','<=', $toDate)->orderBy('date','Asc')->get();
         
         return $transactions;
     }
@@ -161,6 +178,12 @@ class Transaction extends Model
     public static function transactionsToTransactionsRows($transactions)
     {
         $transactionsRows = [];
+        $totalCash = 0;
+        $totalCashDollar = 0;
+        $totalCustodyCash = 0;
+        $totalCheck = 0;
+        $totalVisa = 0;
+        $totalBank = 0;
         foreach($transactions as $trans)
         {
             $transRow = new TransactionRow($trans->date, $trans->description, $trans->clientName);
@@ -171,6 +194,8 @@ class Transaction extends Model
                     $transRow->cash = $trans->value;
                 else
                     $transRow->cash = - $trans->value;
+
+                $totalCash += $transRow->cash;
             }
             else if(!strcmp($account->type,"custodyCash"))
             {
@@ -178,6 +203,8 @@ class Transaction extends Model
                     $transRow->custodyCash = $trans->value;
                 else
                     $transRow->custodyCash = - $trans->value;
+
+                $totalCustodyCash += $transRow->custodyCash;
             }
             else if(!strcmp($account->type,"cashDollar"))
             {
@@ -185,6 +212,8 @@ class Transaction extends Model
                     $transRow->cashDollar = $trans->value;
                 else
                     $transRow->cashDollar = - $trans->value;
+
+                $totalCashDollar += $transRow->cashDollar;
             }
             else if(!strcmp($account->type,"check"))
             {
@@ -192,6 +221,8 @@ class Transaction extends Model
                     $transRow->check = $trans->value;
                 else
                     $transRow->check = - $trans->value;
+
+                $totalCheck += $transRow->check;
             }
             else if(!strcmp($account->type,"visa"))
             {
@@ -199,6 +230,8 @@ class Transaction extends Model
                     $transRow->visa = $trans->value;
                 else
                     $transRow->visa = - $trans->value;
+
+                $totalVisa += $transRow->visa;
             }
             else if(!strcmp($account->type,"bank"))
             {
@@ -206,11 +239,21 @@ class Transaction extends Model
                     $transRow->banks = $trans->value;
                 else
                     $transRow->banks = - $trans->value;
+                
+                $totalBank += $transRow->banks;
             }
             array_push($transactionsRows,$transRow);
         }
+        $transRow = new TransactionRow('', '', '');
+        $transRow->cash = $totalCash;
+        $transRow->cashDollar = $totalCashDollar;
+        $transRow->custodyCash = $totalCustodyCash;
+        $transRow->visa = $totalVisa;
+        $transRow->check = $totalCheck;
+        $transRow->banks = $totalBank;
+        return array($transactionsRows, $transRow);
         // $transactionsRows = json_encode($transactionsRows);
-        return $transactionsRows;
+        // return $transactionsRows;
     }
 
     // public static function getLatest100Transactions($brandId)
@@ -279,4 +322,20 @@ class Transaction extends Model
     //     //     $bankTransaction->save();
     //     // }, 5);
     // }
+
+    public static function getCurrentMonthTransactions($accountId)
+    {
+        $account = Account::where('id', $accountId)->first();
+        if($account ===null)
+            return [];
+        if(Auth::user()->admin)
+        {
+            return Transaction::where('accountId', $account->id)->whereYear('date', Carbon::now('Egypt')->year)->whereMonth('date', Carbon::now('Egypt')->month)->get();
+        }
+        else
+        {
+            return Transaction::where([['accountId', $account->id],['brandId', Auth::user()->brandId]])->whereYear('date', Carbon::now('Egypt')->year)->whereMonth('date', Carbon::now('Egypt')->month)->get();
+        }
+    }
+
 }
