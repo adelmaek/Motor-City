@@ -155,7 +155,7 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label for="settlingDateInput">To Date</label>
+                                                        <label for="settlingDateInput">تاريخ الاستحقاق</label>
                                                         <input type="date" class="form-control" id="settlingDateInput" name="settlingDateInput" style="height: 42px;" value={{$todayDate}} required>     
                                                     </div>
                                                 </div>
