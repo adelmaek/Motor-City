@@ -246,7 +246,7 @@
                                 @endif
                                 <td style="text-align:center">{{App\Models\Brand::where('id', $trans->brandId)->first()->name}}</td>
                                 <td style="text-align:center">{{$trans->accountName}}</td>
-                                <td style="text-align:center;" class='{{($trans->value<0) ? 'table-danger' : '' }}'>{{number_format($trans->value)}}</td>
+                                <td style="text-align:center;" class='{{($trans->value<0) ? 'table-warning' : '' }}'>{{number_format($trans->value)}}</td>
                                 <td style="text-align:center" onclick="editDescription({{$trans->id}});">{{$trans->description}}</td>
                                 <td style="text-align:center" onclick="editClientName({{$trans->id}});">{{$trans->clientName}}</td>
                                 <td style="text-align:center">
