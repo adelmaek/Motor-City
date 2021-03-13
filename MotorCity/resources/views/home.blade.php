@@ -16,11 +16,11 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="brandIdInput">Brand</label>
-                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="brandIdInput" name="brandIdInput"  required>
+                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="brandIdInput" name="brandIdInput" required>
                                         <option value="" disabled selected>Choose brand</option>
                                         @foreach ($brands as $brand)
-                                            <option value="{{$brand->id}}">{{$brand->name}}</option>
-                                        @endforeach                                        
+                                        <option value="{{$brand->id}}">{{$brand->name}}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -32,41 +32,42 @@
                                     <label for="balanceInput">Balance Name</label>
                                     <select class="form-control balanceInput" style="height: 42px;border: 2px solid black;" id="balanceInput" name="balanceInput" required>
                                         <option value="" disabled selected>Select Balance</option>
-                                        <option value="cash">Cash</option>
-                                        <option value="cashDollar">$</option>
+                                        <option value="cash">Cash EGP</option>
+                                        <option value="cashDollar">Cash USD ($)</option>
                                         {{-- <option value="custodyCash">Custody cash</option> --}}
                                         <option value="check">شيكات</option>
-                                        <option value="banks">تحويل بنكي</option>
-                                        <option value="pos">POS</option>
+                                        <option value="banks">تحويل بنك</option>
+                                        <option value="banks">ايداع بنك</option>
+                                        <option value="pos">Credit Card - بطاقه ائتمان</option>
                                         {{-- <option value="visa">POS</option> --}}
                                         {{-- <option value="bankToBank">Bank to bank</option> --}}
                                         {{-- @foreach ($bankAccounts as $bankAccount)
                                             <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id', $bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>
                                         @endforeach
                                         @foreach ($posAccounts as $posAccount)
-                                            <option value="{{$posAccount->id}}">{{$posAccount->name}}</option>
+                                        <option value="{{$posAccount->id}}">{{$posAccount->name}}</option>
                                         @endforeach --}}
                                     </select>
-                                  </div>
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="typeInput">Type</label>
-                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="typeInput" name="typeInput"  required>
+                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="typeInput" name="typeInput" required>
                                         {{-- <option value="" disabled selected>Add/Withdraw</option> --}}
-                                        <option value="add" selected>Add</option>
-                                        <option value="sub">Withdraw</option>
+                                        <option value="add" selected>ايداع</option>
+                                        <option value="sub">سحب</option>
                                     </select>
-                                  </div>
-                            </div>                            
+                                </div>
+                            </div>
                         </div>
                         <div class="row" id="banksList">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="bankAccountId">Bank account</label>
-                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="bankAccountId" name="bankAccountId" >
+                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="bankAccountId" name="bankAccountId">
                                         @foreach ($bankAccounts as $bankAccount)
-                                            <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id', $bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>
+                                        <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id', $bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -76,9 +77,9 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="posAccountId">POS account</label>
-                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="posAccountId" name="posAccountId" >
+                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="posAccountId" name="posAccountId">
                                         @foreach ($posAccounts as $posAccount)
-                                            <option value="{{$posAccount->id}}">{{$posAccount->name}}</option>
+                                        <option value="{{$posAccount->id}}">{{$posAccount->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -87,10 +88,11 @@
                         <div class="row" id="cashWithdrawalReasonDiv">
                             <div class="col-md-6">
                                 <label for="cashWithdrawalReason">Withdrawal reason</label>
-                                <input list="cashWithdrawalReasonList" class="form-control" style="height: 42px;border: 2px solid black;" id="cashWithdrawalReason" name="cashWithdrawalReason" placeholder="Reason" >
+                                <input list="cashWithdrawalReasonList" class="form-control" style="height: 42px;border: 2px solid black;" id="cashWithdrawalReason" name="cashWithdrawalReason"
+                                    placeholder="Reason">
                                 <datalist id="cashWithdrawalReasonList">
-                                        <option value="bank">bank</option>
-                                        <option value="refund">refund</option>
+                                    <option value="bank">bank</option>
+                                    <option value="refund">refund</option>
                                 </datalist>
                             </div>
                         </div>
@@ -98,13 +100,14 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="valueInput">Value</label>
-                                    <input type="number" step ="0.01" class="form-control" id="valueInput" name="valueInput" placeholder="Value" required style="min-width: 100px;border: 2px solid black;" >
-                                  </div>
+                                    <input type="number" step="0.01" class="form-control" id="valueInput" name="valueInput" placeholder="Value" required
+                                        style="min-width: 100px;border: 2px solid black;">
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="dateInput">Date</label>
-                                    <input type="date" class="form-control" id="dateInput" name="dateInput" style="height: 42px;border: 2px solid black;" value="{{$today}}" max="{{$today}}"  required>     
+                                    <input type="date" class="form-control" id="dateInput" name="dateInput" style="height: 42px;border: 2px solid black;" value="{{$today}}" max="{{$today}}" required>
                                 </div>
                             </div>
                         </div>
@@ -112,31 +115,32 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="checkIsFromBankInput">اسم البنك</label>
-                                    <input list="checkIsFromBankInputList" class="form-control" style="height: 42px;border: 2px solid black;" id="checkIsFromBankInput" name="checkIsFromBankInput" placeholder="Bank name" >
+                                    <input list="checkIsFromBankInputList" class="form-control" style="height: 42px;border: 2px solid black;" id="checkIsFromBankInput" name="checkIsFromBankInput"
+                                        placeholder="Bank name">
                                     <datalist id="checkIsFromBankInputList">
                                         @foreach ($banks as $bank)
-                                            <option value="{{$bank->name}}">{{$bank->name}}</option>
+                                        <option value="{{$bank->name}}">{{$bank->name}}</option>
                                         @endforeach
                                     </datalist>
                                     {{-- <select class="form-control" style="height: 42px;border: 2px solid black;" id="checkIsFromBankInput" name="checkIsFromBankInput" >
                                         <option value="" disabled selected>From bank</option>
                                         @foreach ($banks as $bank)
                                             <option value="{{$bank->name}}">{{$bank->name}}</option>
-                                        @endforeach
-                                        <option value="-1">Others</option>
+                                    @endforeach
+                                    <option value="-1">Others</option>
                                     </select> --}}
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="checkNumberInput">رقم الشيك</label>
-                                    <input type="text" class="form-control" id="checkNumberInput" name="checkNumberInput" placeholder="Check Number"  style="min-width: 100px;border: 2px solid black;" >
+                                    <input type="text" class="form-control" id="checkNumberInput" name="checkNumberInput" placeholder="Check Number" style="min-width: 100px;border: 2px solid black;">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="checkValidityDateInput">تاريخ الشيك</label>
-                                    <input type="date" class="form-control" id="checkValidityDateInput" value="{{$today}}" name="checkValidityDateInput" style="height: 42px;border: 2px solid black;" >  
+                                    <input type="date" class="form-control" id="checkValidityDateInput" value="{{$today}}" name="checkValidityDateInput" style="height: 42px;border: 2px solid black;">
                                 </div>
                             </div>
                         </div>
@@ -144,21 +148,21 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="fromBank">Form bank</label>
-                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="fromBank" name="fromBank" >
+                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="fromBank" name="fromBank">
                                         <option value="" disabled selected>From bank</option>
                                         @foreach ($bankAccounts as $bankAccount)
-                                            <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id', $bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>
+                                        <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id', $bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>
                                         @endforeach
                                     </select>
-                                  </div>
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="toBank">To bank</label>
-                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="toBank" name="toBank" >
+                                    <select class="form-control" style="height: 42px;border: 2px solid black;" id="toBank" name="toBank">
                                         <option value="" disabled selected>To bank</option>
                                         @foreach ($bankAccounts as $bankAccount)
-                                            <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id', $bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>
+                                        <option value="{{$bankAccount->id}}">{{App\Models\Bank::where('id', $bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -181,30 +185,30 @@
                         {{-- <button type="submit" class="btn btn-dark">Submit</button> --}}
                         <input type="submit" name="submit" class="btn btn-dark btn-md" value="Submit">
                         <input type="hidden" name="_token" value="{{Session::token()}}">
-                      </form>
+                    </form>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
             <div class="card border-dark">
                 <div class="card-header m-b-0 text-white bg-dark">Accounts</div>
-                <div class="card-body" id="Accounts" >
+                <div class="card-body" id="Accounts">
                     <h3 class="card-title">Accounts</h3>
                     <div class="table-responsive-sm">
-                        <table  id="accountsTable" class="table color-bordered-table table-striped full-color-table full-info-table hover-table ">
+                        <table id="accountsTable" class="table color-bordered-table table-striped full-color-table full-info-table hover-table ">
                             <thead>
                                 <tr>
-                                <th scope="col" style="text-align:center">Account Name</th>
-                                <th scope="col" style="text-align:center">Current Balance</th>
+                                    <th scope="col" style="text-align:center">Account Name</th>
+                                    <th scope="col" style="text-align:center">Current Balance</th>
                                 </tr>
                             </thead>
                             <tbody>
-                            @foreach ($currentUserAccounts as $account)
+                                @foreach ($currentUserAccounts as $account)
                                 <tr>
                                     <td style="text-align:center">{{$account->accountName}}</td>
                                     <td style="text-align:center">{{number_format($account->balance)}}</td>
                                 </tr>
-                            @endforeach
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -218,7 +222,7 @@
                 <div class="card-header m-b-0 text-white bg-dark">Latest Transaction</div>
                 <div class="card-body" id="inputs">
                     <h3 class="card-title">Latest User Transactions</h3>
-                    <table  id="transactionsTable" class="table color-bordered-table table-striped full-color-table full-info-table hover-table " style="width:100%">
+                    <table id="transactionsTable" class="table color-bordered-table table-striped full-color-table full-info-table hover-table " style="width:100%">
                         <thead style="width:100%">
                             <tr>
                                 <th scope="col" style="text-align:center">Date</th>
@@ -232,30 +236,25 @@
                             </tr>
                         </thead>
                         <tbody>
-                        @foreach ($transactions as $trans)
-                            @if(!strcmp($trans->accountType,"check"))
-                                <tr style="background-color:#d8d52a">
-                            @elseif(!strcmp($trans->accountType,"bank"))
-                                <tr style="background-color:#1c9e38">
-                            @else
-                                <tr>
-                            @endif
+                            @foreach ($transactions as $trans)
+                            <tr>
                                 <td style="text-align:center">{{$trans->date}}</td>
                                 @if(!strcmp('add', $trans->type))
-                                    <td style="text-align:center">Deposit</td>
+                                <td style="text-align:center">Deposit</td>
                                 @else
-                                    <td style="text-align:center">Withdrawal</td>
+                                <td style="text-align:center; class='table-danger'">Withdrawal</td>
                                 @endif
                                 <td style="text-align:center">{{App\Models\Brand::where('id', $trans->brandId)->first()->name}}</td>
-                                <td style="text-align:center">{{$trans->accountName}}</td> 
-                                <td style="text-align:center">{{number_format($trans->value)}}</td> 
+                                <td style="text-align:center">{{$trans->accountName}}</td>
+                                <td style="text-align:center; class='{{($trans->value<0) ? 'table-danger' : '' }}'">{{number_format($trans->value)}}</td>
                                 <td style="text-align:center" onclick="editDescription({{$trans->id}});">{{$trans->description}}</td>
-                                <td style="text-align:center"onclick="editClientName({{$trans->id}});">{{$trans->clientName}}</td>
+                                <td style="text-align:center" onclick="editClientName({{$trans->id}});">{{$trans->clientName}}</td>
                                 <td style="text-align:center">
-                                    <a class="btn btn-danger delete-confirm" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('deleteTransaction',[$trans->id])}}" role="button">Delete</a>
+                                    <a class="btn btn-danger delete-confirm" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('deleteTransaction',[$trans->id])}}"
+                                        role="button">Delete</a>
                                 </td>
                             </tr>
-                        @endforeach
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -266,26 +265,26 @@
 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered " role="document">
         <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Edit here</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <form action="{{ url('/') }}" method="post" id="modalForm">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="editInput">Edit here</label>
-                            <textarea class="form-control" id="editInput" name="editInput" rows="2" style="border: 2px solid black;" required></textarea>
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit here</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url('/') }}" method="post" id="modalForm">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="editInput">Edit here</label>
+                                <textarea class="form-control" id="editInput" name="editInput" rows="2" style="border: 2px solid black;" required></textarea>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <input type="submit" name="submit" class="btn btn-dark btn-md" value="Edit">
-                <input type="hidden" name="_token" value="{{Session::token()}}">
-            </form>
-        </div>
+                    <input type="submit" name="submit" class="btn btn-dark btn-md" value="Edit">
+                    <input type="hidden" name="_token" value="{{Session::token()}}">
+                </form>
+            </div>
         </div>
     </div>
 </div>
