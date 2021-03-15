@@ -210,7 +210,7 @@ class TransactionController extends Controller
                 $brandsIds = Brand::where('id',Auth::user()->brandId)->get('id');
 
             $accountsIds = Account::whereIn('brandID', $brandsIds)->where('type', $accountType)->get('id');
-            $transactions = Transaction::whereIn('accountId', $accountsIds)->whereYear('date', Carbon::now('Egypt')->year)->whereMonth('date', Carbon::now('Egypt')->month)->orderBy('date','Asc')->get();
+            $transactions = Transaction::whereIn('accountId', $accountsIds)->whereYear('date', Carbon::now('Egypt')->year)->whereMonth('date', Carbon::now('Egypt')->month)->orderBy('date','Desc')->get();
         }     
         return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType, 'transactions'=>$transactions, 'brands'=>$brands, "todayDate"=>$todayDate, "bankAccounts"=>$bankAccounts,'yesterday'=>$yesterday]);
     }

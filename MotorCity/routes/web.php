@@ -51,4 +51,8 @@ Route::post('/queryPosAccountTransaction/{accountId}',[App\Http\Controllers\Tran
 Route::post('/settlePosTransactions',[App\Http\Controllers\TransactionController::class, 'postSettlePosTransactions'])->name('settlePosTransactions')->middleware('auth');
 Route::post('/confirmSettlingPos/{transactionId}',[App\Http\Controllers\TransactionController::class, 'postConfirmSettlingPos'])->name('confirmSettlingPos')->middleware('auth');
 Route::get('/search',[App\Http\Controllers\TransactionController::class, 'getSearchTransactions'])->name('search')->middleware('auth');
+Route::get('/tempTransactions',[App\Http\Controllers\TempTransactionController::class, 'getTempTransactions'])->name('tempTransactions')->middleware('auth');
+Route::post('/tempTransactions',[App\Http\Controllers\TempTransactionController::class, 'postTempTransaction'])->name('tempTransactions')->middleware('auth');
+Route::get('/deleteTempTransaction/{transactionId}',[App\Http\Controllers\TempTransactionController::class, 'getDeleteTempTransaction'])->name('deleteTempTransaction')->middleware('auth');
+Route::post('/confirmTempTransaction/{transactionId}',[App\Http\Controllers\TempTransactionController::class, 'postConfirmTempTransaction'])->name('confirmTempTransaction')->middleware('auth');
 

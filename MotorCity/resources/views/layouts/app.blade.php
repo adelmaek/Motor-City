@@ -87,6 +87,7 @@
                                     @foreach ($bankAccounts as $bankAccount)
                                         <a class="dropdown-item" href="{{route('queryBankAccountTransaction',[$bankAccount->id])}}">{{App\Models\Bank::where('id', $bankAccount->bankID)->first()->name}} {{$bankAccount->name}}</a>
                                     @endforeach
+                                    <a class="dropdown-item" href="{{route('tempTransactions')}}">حساب مؤقت</a>
                                 </div>
                             </div>
                         </li>
