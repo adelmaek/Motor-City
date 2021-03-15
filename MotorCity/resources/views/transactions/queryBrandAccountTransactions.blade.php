@@ -41,11 +41,12 @@
                                 <div class="form-group">
                                     <label for="brandIdInput">Brand</label>
                                     <select class="form-control" style="height: 42px;" id="brandIdInput" name="brandIdInput" required>
-                                        @if(!strcmp("posCommission", $accountType))
+                                        {{-- @if(!strcmp("posCommission", $accountType))
                                             <option value="all" selected>All</option>
                                         @else
                                             <option value="" disabled selected>Choose brand</option>
-                                        @endif
+                                        @endif --}}
+                                        <option value="all" selected>All</option>
                                         @foreach ($brands as $brand)
                                             <option value="{{$brand->id}}">{{$brand->name}}</option>
                                         @endforeach                                        
@@ -121,7 +122,7 @@
                                                 @if(\Carbon\Carbon::parse($trans->checkSettlingDate)->gt(\Carbon\Carbon::parse($todayDate)) )
                                                     <a class="btn btn-info disabled"  style="height:25px;padding: 3px 8px;padding-bottom: 3px;" role="button">Confirm Settling</a>
                                                 @else
-                                                    <a class="btn btn-warning active text-white " style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('confirmSettling',[$trans->id])}}" role="button" >Confirm Settling</a>
+                                                    <a class="btn btn-warning active text-white delete-confirm" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('confirmSettling',[$trans->id])}}" role="button" >Confirm Settling</a>
                                                 @endif
                                             @else
                                                 Settled to {{App\Models\Bank::where('id',App\Models\Account::where('id',$trans->checKToBankId)->first()->bankID)->first()->name}} {{App\Models\Account::where('id',$trans->checKToBankId)->first()->name}}

@@ -158,9 +158,14 @@ class TransactionController extends Controller
         $brands = Brand::all();
         $brandId = 0; //just intialization
         if($request['brandIdInput'] === null) //if a none admin user
-            $brandId = Auth::user()->brandId;
+            $brandId = array(Auth::user()->brandId);
         else // it's an admin user. He chose a brand.
-            $brandId = $request['brandIdInput']; 
+        {
+            if(!strcmp('all', $request['brandIdInput']))
+                $brandId = Brand::all('id');
+            else
+                $brandId = Brand::where('id', $request['brandIdInput'])->get('id');
+        }
         // Log::debug('brandID = '); Log::debug($brandId);
         $fromDate = $request['fromDateInput'];
         $toDate = $request['toDateInput'];
@@ -205,7 +210,7 @@ class TransactionController extends Controller
                 $brandsIds = Brand::where('id',Auth::user()->brandId)->get('id');
 
             $accountsIds = Account::whereIn('brandID', $brandsIds)->where('type', $accountType)->get('id');
-            $transactions = Transaction::whereIn('accountId', $accountsIds)->whereYear('date', Carbon::now('Egypt')->year)->whereMonth('date', Carbon::now('Egypt')->month)->get();
+            $transactions = Transaction::whereIn('accountId', $accountsIds)->whereYear('date', Carbon::now('Egypt')->year)->whereMonth('date', Carbon::now('Egypt')->month)->orderBy('date','Asc')->get();
         }     
         return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType, 'transactions'=>$transactions, 'brands'=>$brands, "todayDate"=>$todayDate, "bankAccounts"=>$bankAccounts,'yesterday'=>$yesterday]);
     }
@@ -230,20 +235,21 @@ class TransactionController extends Controller
 
         // Log::debug($brandId);
         
-        $account = null;
+        $accountIds = null;
         if(!strcmp("posCommission", $accountType))
-            $account = Account::where("type", $accountType)->first();
+            $accountIds = Account::where("type", $accountType)->get('id');
         else
-            $account = Account::whereIn('brandID',$brandId)->where("type", $accountType)->first();
+            $accountIds = Account::whereIn('brandID',$brandId)->where("type", $accountType)->get('id');
 
-        if($account === null)
+        
+        if($accountIds === null || $accountIds->isEmpty())
             return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType,'transactions'=>[], 'brands'=>$brands, "todayDate"=>$todayDate, "bankAccounts"=>$bankAccounts]);
 
         $fromDate = $request['fromDateInput'];
         $toDate = $request['toDateInput'];
         
         $transactions = [];
-        $transactions = Transaction::getTransactionOfAccount( $account->id,$brandId, $fromDate, $toDate);
+        $transactions = Transaction::getTransactionOfAccounts( $accountIds,$brandId, $fromDate, $toDate);
 
         return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType,'transactions'=>$transactions, 'brands'=>$brands, "todayDate"=>$todayDate, "bankAccounts"=>$bankAccounts, 'yesterday'=>$yesterday]);
     }
@@ -327,7 +333,7 @@ class TransactionController extends Controller
         DB::transaction(function () use($transaction, $toBankAccount, $bankTransaction, $description,$checksAccount) {
             $transaction->save();
             $toBankAccount->save();
-            $bankTransaction->init($transaction->checKToBankId, Auth::user()->id, "add", $transaction->value, $transaction->date, null, null, null, null, null ,null,null,$description, $transaction->clientName, $transaction->brandId);
+            $bankTransaction->init($transaction->checKToBankId, Auth::user()->id, "add", $transaction->value, $transaction->date, null, null, null, null, null ,null,null,$description, $transaction->clientName, $transaction->brandId, 1);
             $bankTransaction->save();
             $checksAccount->save();
         }, 5);
@@ -417,7 +423,7 @@ class TransactionController extends Controller
             $description = "A settling transaction";
             $clientName = Auth::user()->name;
             DB::transaction(function () use($settlingTransaction, $transaction, $totalValue, $today, $account, $description, $clientName) {
-                $settlingTransaction->init($account->id, Auth::user()->id, "sub", $totalValue, $today, null, null, null, true, null ,null,null,$description, $clientName, $transaction->brandId);
+                $settlingTransaction->init($account->id, Auth::user()->id, "sub", $totalValue, $today, null, null, null, true, null ,null,null,$description, $clientName, $transaction->brandId, 1);
                 $settlingTransaction->save();
                 $account->save();
             }, 5);
@@ -464,8 +470,8 @@ class TransactionController extends Controller
 
 
         DB::transaction(function () use($transaction,$bankTransaction, $commissionTransaction, $bankAccount,$commissionAccount, $bankValue, $commissionValue, $today, $description,$brandId) {
-            $bankTransaction->init($bankAccount->id, Auth::user()->id, "add", $bankValue, $today, null, null, null, null, null ,null,null,$description, Auth::user()->name, $brandId);
-            $commissionTransaction->init($commissionAccount->id, Auth::user()->id, "add", $commissionValue, $today, null, null, null, null, null ,null,null,$description, Auth::user()->name, $brandId);
+            $bankTransaction->init($bankAccount->id, Auth::user()->id, "add", $bankValue, $today, null, null, null, null, null ,null,null,$description, Auth::user()->name, $brandId, 1);
+            $commissionTransaction->init($commissionAccount->id, Auth::user()->id, "add", $commissionValue, $today, null, null, null, null, null ,null,null,$description, Auth::user()->name, $brandId, 1);
             $bankTransaction->save();
             $commissionTransaction->save();
             $transaction->save();
@@ -477,7 +483,7 @@ class TransactionController extends Controller
     }
     public function getSearchTransactions(Request $request)
     {
-        $transactions = Transaction::where('clientName','like', '%'.$request["searchInput"].'%')->orWhere('value', $request["searchInput"])->get();
+        $transactions = Transaction::where('clientName','like', '%'.$request["searchInput"].'%')->orWhere('description','like','%'.$request["searchInput"].'%')->orWhere('value', $request["searchInput"])->get();
 
         return view('transactions.searchResults',["transactions"=>$transactions]);
     }

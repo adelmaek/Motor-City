@@ -48,7 +48,7 @@ class HomeController extends Controller
             $acc->setAttribute('accountName', $accountName);
         }
         $transactions = [];
-        $transactions = Transaction::where('userId', Auth::user()->id)->limit(100)->orderBy('id','Desc')->get();
+        $transactions = Transaction::where('userId', Auth::user()->id)->limit(100)->orderBy('id','Desc')->where('automated',0)->get();
         foreach($transactions as $transaction)
         {
             $account = Account::where('id', $transaction->accountId)->first();

@@ -28,7 +28,7 @@ class Transaction extends Model
         'clientName',
         'currentBalance'
     ];
-    public function init($accountId=null, $userId=null, $type=null, $value=null, $date=null, $fromBankName=null, $checkNumber=null,$validityDate=null, $settled=null, $confirmSettling =null,$checKToBankId,$checkSettlingDate, $description=null, $clientName=null, $brandId)
+    public function init($accountId=null, $userId=null, $type=null, $value=null, $date=null, $fromBankName=null, $checkNumber=null,$validityDate=null, $settled=null, $confirmSettling =null,$checKToBankId,$checkSettlingDate, $description=null, $clientName=null, $brandId, $automated=0)
     {
         $this->brandId = $brandId;
         $this->accountId = $accountId;
@@ -45,7 +45,8 @@ class Transaction extends Model
         $this->clientName = $clientName;       
         $this->checKToBankId = $checKToBankId;
         $this->checkSettlingDate = $checkSettlingDate;
-       
+        $this->automated = $automated;
+
         $this->updateCurrentBalanceOnAddition();
 
     }
@@ -96,13 +97,13 @@ class Transaction extends Model
         $transactions = [];
       
         if($fromDate === null && $toDate === null)
-            $transactions = Transaction::where('brandId', $brandId)->orderBy('date','Asc')->get();
+            $transactions = Transaction::whereIn('brandId', $brandId)->orderBy('date','Desc')->where('automated',0)->get();
         else if($fromDate != null && $toDate === null)
-            $transactions = Transaction::where('brandId', $brandId)->whereDate('date','>=',$fromDate)->orderBy('date','Asc')->get();
+            $transactions = Transaction::whereIn('brandId', $brandId)->whereDate('date','>=',$fromDate)->where('automated',0)->orderBy('date','Desc')->get();
         else if ($fromDate === null && $toDate != null)
-            $transactions = Transaction::where('brandId', $brandId)->whereDate('date','<=',$toDate)->orderBy('date','Asc')->get();
+            $transactions = Transaction::whereIn('brandId', $brandId)->whereDate('date','<=',$toDate)->where('automated',0)->orderBy('date','Desc')->get();
         else
-            $transactions = Transaction::where('brandId', $brandId)->whereDate('date','>=',$fromDate)->whereDate('date','<=', $toDate)->orderBy('date','Asc')->get();
+            $transactions = Transaction::whereIn('brandId', $brandId)->whereDate('date','>=',$fromDate)->whereDate('date','<=', $toDate)->where('automated',0)->orderBy('date','Desc')->get();
         
         return $transactions;
     }
@@ -128,13 +129,28 @@ class Transaction extends Model
         $transactions = [];
         // Log::info('getTransactionOfAccount', ['accountId' => $accountId, "brandId"=>$brandId,"fromDate"=>$fromDate,"toDate"=>$toDate]);
         if($fromDate === null && $toDate === null)
-            $transactions = Transaction::where('accountId',$accountId)->whereIn('brandId', $brandIds)->orderBy('date','Asc')->get();
+            $transactions = Transaction::where('accountId',$accountId)->whereIn('brandId', $brandIds)->orderBy('date','Desc')->get();
         else if($fromDate != null && $toDate === null)
-            $transactions = Transaction::where('accountId',$accountId)->whereIn('brandId', $brandIds)->whereDate('date','>=',$fromDate)->orderBy('date','Asc')->get();
+            $transactions = Transaction::where('accountId',$accountId)->whereIn('brandId', $brandIds)->whereDate('date','>=',$fromDate)->orderBy('date','Desc')->get();
         else if ($fromDate === null && $toDate != null)
-            $transactions = Transaction::where('accountId',$accountId)->whereIn('brandId', $brandIds)->whereDate('date','<=',$toDate)->orderBy('date','Asc')->get();
+            $transactions = Transaction::where('accountId',$accountId)->whereIn('brandId', $brandIds)->whereDate('date','<=',$toDate)->orderBy('date','Desc')->get();
         else
-            $transactions = Transaction::where('accountId',$accountId)->whereIn('brandId', $brandIds)->whereDate('date','>=',$fromDate)->whereDate('date','<=', $toDate)->orderBy('date','Asc')->get();
+            $transactions = Transaction::where('accountId',$accountId)->whereIn('brandId', $brandIds)->whereDate('date','>=',$fromDate)->whereDate('date','<=', $toDate)->orderBy('date','Desc')->get();
+        
+        return $transactions;
+    }
+    public static function getTransactionOfAccounts ( $accountIds, $brandIds, $fromDate=null, $toDate=null)
+    {
+        $transactions = [];
+        // Log::info('getTransactionOfAccount', ['accountId' => $accountId, "brandId"=>$brandId,"fromDate"=>$fromDate,"toDate"=>$toDate]);
+        if($fromDate === null && $toDate === null)
+            $transactions = Transaction::whereIn('accountId',$accountIds)->whereIn('brandId', $brandIds)->orderBy('date','Desc')->get();
+        else if($fromDate != null && $toDate === null)
+            $transactions = Transaction::whereIn('accountId',$accountIds)->whereIn('brandId', $brandIds)->whereDate('date','>=',$fromDate)->orderBy('date','Desc')->get();
+        else if ($fromDate === null && $toDate != null)
+            $transactions = Transaction::whereIn('accountId',$accountIds)->whereIn('brandId', $brandIds)->whereDate('date','<=',$toDate)->orderBy('date','Desc')->get();
+        else
+            $transactions = Transaction::whereIn('accountId',$accountIds)->whereIn('brandId', $brandIds)->whereDate('date','>=',$fromDate)->whereDate('date','<=', $toDate)->orderBy('date','Desc')->get();
         
         return $transactions;
     }
@@ -330,11 +346,11 @@ class Transaction extends Model
             return [];
         if(Auth::user()->admin)
         {
-            return Transaction::where('accountId', $account->id)->whereYear('date', Carbon::now('Egypt')->year)->whereMonth('date', Carbon::now('Egypt')->month)->get();
+            return Transaction::where('accountId', $account->id)->whereYear('date', Carbon::now('Egypt')->year)->whereMonth('date', Carbon::now('Egypt')->month)->orderBy('date','Asc')->get();
         }
         else
         {
-            return Transaction::where([['accountId', $account->id],['brandId', Auth::user()->brandId]])->whereYear('date', Carbon::now('Egypt')->year)->whereMonth('date', Carbon::now('Egypt')->month)->get();
+            return Transaction::where([['accountId', $account->id],['brandId', Auth::user()->brandId]])->whereYear('date', Carbon::now('Egypt')->year)->whereMonth('date', Carbon::now('Egypt')->month)->orderBy('date','Asc')->get();
         }
     }
 

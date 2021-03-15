@@ -192,8 +192,8 @@
             event.preventDefault();
             const url = $(this).attr('href');
             swal({
-                title: 'Are you sure?',
-                text: 'This record and it`s details will be permanantly deleted!',
+                title: 'هل انت متأكد؟',
+                text: '!هذا العمل لا يمكن الرجوع فيه',
                 icon: 'warning',
                 buttons: ["Cancel", "Yes!"],
             }).then(function(value) {

@@ -31,6 +31,7 @@ class CreateTransactionsTable extends Migration
             $table->string('description');
             $table->string('clientName');
             $table->double("currentBalance",40,3);
+            $table->boolean('automated')->default('0');
         });
     }
 
