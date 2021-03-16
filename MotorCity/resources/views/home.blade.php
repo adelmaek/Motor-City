@@ -221,7 +221,7 @@
             <div class="card border-dark">
                 <div class="card-header m-b-0 text-white bg-dark">Latest Transaction</div>
                 <div class="card-body" id="inputs">
-                    <h3 class="card-title">Latest User Transactions</h3>
+                    <h3 class="card-title">Latest Transactions</h3>
                     <table id="transactionsTable" class="table color-bordered-table table-striped full-color-table full-info-table hover-table " style="width:100%">
                         <thead style="width:100%">
                             <tr>

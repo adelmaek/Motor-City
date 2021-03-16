@@ -48,7 +48,12 @@ class HomeController extends Controller
             $acc->setAttribute('accountName', $accountName);
         }
         $transactions = [];
-        $transactions = Transaction::where('userId', Auth::user()->id)->limit(100)->orderBy('id','Desc')->where('automated',0)->get();
+        $brandId = [];
+        if(Auth::user()->admin)
+            $brandId = Brand::all('id');
+        else
+            $brandId = array(Auth::user()->brandId);
+        $transactions = Transaction::whereIn('brandId', $brandId)->limit(300)->orderBy('date','Desc')->where('automated',0)->get();
         foreach($transactions as $transaction)
         {
             $account = Account::where('id', $transaction->accountId)->first();
