@@ -22,7 +22,7 @@ class TempTransactionController extends Controller
         $bankAccounts = Account::getBankAccounts();
 
         $transactions = [];
-        $transactions = TempTransaction::where('confirmed', 0)->whereYear('date', Carbon::now('Egypt')->year)->whereMonth('date', Carbon::now('Egypt')->month)->orderBy('date','Desc')->get();
+        $transactions = TempTransaction::where('confirmed', 0)->whereYear('date', Carbon::now('Egypt')->year)->whereMonth('date', Carbon::now('Egypt')->month)->orderBy('date','Desc')->orderBy('id', 'Desc')->get();
         return view('transactions.tempTransactions',['transactions'=>$transactions, 'brands'=>$brands, "today"=>$todayDate, "bankAccounts"=>$bankAccounts]);
     }
 
