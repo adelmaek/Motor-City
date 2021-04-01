@@ -345,12 +345,12 @@ class Transaction extends Model
         if($account ===null)
             return [];
         if(Auth::user()->admin)
-        {
-            return Transaction::where('accountId', $account->id)->whereYear('date', Carbon::now('Egypt')->year)->whereMonth('date', Carbon::now('Egypt')->month)->orderBy('date','Desc')->orderBy('id', 'Desc')->get();
+        { //Client needed latest 1000 instead of current month
+            return Transaction::where('accountId', $account->id)->limit(1000)->orderBy('date','Desc')->orderBy('id', 'Desc')->get();
         }
         else
         {
-            return Transaction::where([['accountId', $account->id],['brandId', Auth::user()->brandId]])->whereYear('date', Carbon::now('Egypt')->year)->whereMonth('date', Carbon::now('Egypt')->month)->orderBy('date','Desc')->orderBy('id', 'Desc')->get();
+            return Transaction::where([['accountId', $account->id],['brandId', Auth::user()->brandId]])->limit(1000)->orderBy('date','Desc')->orderBy('id', 'Desc')->get();
         }
     }
 
