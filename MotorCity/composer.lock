@@ -4806,16 +4806,16 @@
         },
         {
             "name": "facade/ignition",
-            "version": "2.5.3",
+            "version": "2.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facade/ignition.git",
-                "reference": "d8dc4f90ed469f9f9313b976fb078c20585d5c99"
+                "reference": "bdc8b0b32c888f6edc838ca641358322b3d9506d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facade/ignition/zipball/d8dc4f90ed469f9f9313b976fb078c20585d5c99",
-                "reference": "d8dc4f90ed469f9f9313b976fb078c20585d5c99",
+                "url": "https://api.github.com/repos/facade/ignition/zipball/bdc8b0b32c888f6edc838ca641358322b3d9506d",
+                "reference": "bdc8b0b32c888f6edc838ca641358322b3d9506d",
                 "shasum": ""
             },
             "require": {
@@ -4873,7 +4873,13 @@
                 "laravel",
                 "page"
             ],
-            "time": "2020-12-09T20:25:45+00:00"
+            "support": {
+                "docs": "https://flareapp.io/docs/ignition-for-laravel/introduction",
+                "forum": "https://twitter.com/flareappio",
+                "issues": "https://github.com/facade/ignition/issues",
+                "source": "https://github.com/facade/ignition"
+            },
+            "time": "2021-03-30T15:55:38+00:00"
         },
         {
             "name": "facade/ignition-contracts",
@@ -7006,5 +7012,5 @@
         "php": "^7.3|^8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "1.1.0"
+    "plugin-api-version": "2.0.0"
 }
