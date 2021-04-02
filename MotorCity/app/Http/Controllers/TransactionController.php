@@ -210,7 +210,7 @@ class TransactionController extends Controller
                 $brandsIds = Brand::where('id',Auth::user()->brandId)->get('id');
 
             $accountsIds = Account::whereIn('brandID', $brandsIds)->where('type', $accountType)->get('id');
-            $transactions = Transaction::whereIn('accountId', $accountsIds)->whereYear('date', Carbon::now('Egypt')->year)->whereMonth('date', Carbon::now('Egypt')->month)->orderBy('date','Desc')->get();
+            $transactions = Transaction::whereIn('accountId', $accountsIds)->limit(1000)->orderBy('date','Desc')->orderBy('id', 'Desc')->get();
         }     
         return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType, 'transactions'=>$transactions, 'brands'=>$brands, "todayDate"=>$todayDate, "bankAccounts"=>$bankAccounts,'yesterday'=>$yesterday]);
     }
@@ -289,11 +289,16 @@ class TransactionController extends Controller
     {
         $transaction = Transaction::where('id', $transactionId)->first();
         $account = Account::where('id',$transaction->accountId)->first();
-        DB::transaction(function () use($transaction, $account){
+        $newBalance = $account->balance;
+        if(!strcmp($transaction->type,"add"))
+            $newBalance = $account->balance - $transaction->value;
+        else
+            $newBalance = $account->balance + $transaction->value;
+        DB::transaction(function () use($transaction, $account, $newBalance){
             $deletionStatus = $transaction->deleteTransaction();
             if($deletionStatus)
             {
-                $account->balance = $account->balance - $transaction->value;
+                $account->balance = $newBalance;
                 $account->save();
             }
         }, 5);
