@@ -53,7 +53,7 @@ class HomeController extends Controller
             $brandId = Brand::all('id');
         else
             $brandId = array(Auth::user()->brandId);
-        $transactions = Transaction::whereIn('brandId', $brandId)->limit(300)->orderBy('date','Desc')->orderBy('id', 'Desc')->where('automated',0)->get();
+        $transactions = Transaction::whereIn('brandId', $brandId)->limit(100)->orderBy('date','Desc')->orderBy('id', 'Desc')->where('automated',0)->get();
         foreach($transactions as $transaction)
         {
             $account = Account::where('id', $transaction->accountId)->first();
