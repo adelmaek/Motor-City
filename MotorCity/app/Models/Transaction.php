@@ -53,11 +53,11 @@ class Transaction extends Model
 
     private function updateCurrentBalanceOnAddition()
     {
-        $prevTransaction = Transaction::where( [['accountId','=',$this->accountId]])->whereDate('date','<=',$this->date)->orderBy('date','Desc')->first();
+        $prevTransaction = Transaction::where( [['accountId','=',$this->accountId]])->whereDate('date','<=',$this->date)->orderBy('date','Desc')->lockForUpdate()->first();
         if(!empty($prevTransaction))
-            $prevTransaction = Transaction::where( [['accountId','=',$this->accountId]])->whereDate('date','=',$prevTransaction->date)->orderBy('id','Desc')->first();
+            $prevTransaction = Transaction::where( [['accountId','=',$this->accountId]])->whereDate('date','=',$prevTransaction->date)->orderBy('id','Desc')->lockForUpdate()->first();
                                                      
-        $followingTransactions = Transaction::where([['accountId','=',$this->accountId]])->whereDate('date','>',$this->date)->orderBy('date','Asc')->get();
+        $followingTransactions = Transaction::where([['accountId','=',$this->accountId]])->whereDate('date','>',$this->date)->orderBy('date','Asc')->lockForUpdate()->get();
                                                       
         if(!empty($prevTransaction))
         {
@@ -281,11 +281,11 @@ class Transaction extends Model
     public static function updateCurrentBalanceOnDeletion($transactionDate, $accountId)
     {
         $account = Account::where('id', $accountId)->first();
-        $prevTransaction = Transaction::where('accountId', $accountId)->whereDate('date','<',$transactionDate)->orderBy('date','Desc')->first();
+        $prevTransaction = Transaction::where('accountId', $accountId)->whereDate('date','<',$transactionDate)->orderBy('date','Desc')->lockForUpdate()->first();
         if(!empty($prevTransaction))
-            $prevTransaction = Transaction::where('accountId', $accountId)->whereDate('date','=',$prevTransaction->date)->orderBy('id','Desc')->first();
+            $prevTransaction = Transaction::where('accountId', $accountId)->whereDate('date','=',$prevTransaction->date)->orderBy('id','Desc')->lockForUpdate()->first();
 
-        $followingTransactions = Transaction::where('accountId', $accountId)->whereDate('date','>=',$transactionDate)->orderBy('date','Asc')->get();
+        $followingTransactions = Transaction::where('accountId', $accountId)->whereDate('date','>=',$transactionDate)->orderBy('date','Asc')->lockForUpdate()->get();
         
         if(!empty($prevTransaction))
             $currentBalance = $prevTransaction->currentBalance;
