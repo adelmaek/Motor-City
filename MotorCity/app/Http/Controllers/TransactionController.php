@@ -17,64 +17,63 @@ class TransactionController extends Controller
 {
     public function postAddTransaction(Request $request)
     {
-        DB::transaction(function () use($request){
-            if(Auth::user()->admin)
-            {
-                $brandId = $request['brandIdInput'];
-            }
+        if(Auth::user()->admin)
+        {
+            $brandId = $request['brandIdInput'];
+        }
 
-            else
-                $brandId = Auth::user()->brandId;
+        else
+            $brandId = Auth::user()->brandId;
 
-            $balanceInput = $request['balanceInput'];
-            $account=null;
-            $toAccount=null;
-            $fromAccount=null;
-            $description = $request['noteInput'];
-            if(!strcmp($balanceInput,"cash") || !strcmp($balanceInput,"custodyCash") || !strcmp($balanceInput,"cashDollar") || !strcmp($balanceInput,"check"))
+        $balanceInput = $request['balanceInput'];
+        $account=null;
+        $toAccount=null;
+        $fromAccount=null;
+        $description = $request['noteInput'];
+        if(!strcmp($balanceInput,"cash") || !strcmp($balanceInput,"custodyCash") || !strcmp($balanceInput,"cashDollar") || !strcmp($balanceInput,"check"))
+        {
+            $account = Account::where([['type','=',$balanceInput],['brandId','=',$brandId]])->first();
+            if($account === null)
             {
-                $account = Account::where([['type','=',$balanceInput],['brandId','=',$brandId]])->lockForUpdate()->first();
-                if($account === null)
-                {
-                    $brand = Brand::where('id','=',$brandId)->first();
-                    $name = $brand->name . ":" . $balanceInput;
-                    $account = new Account();
-                    $account->init($name, $balanceInput, 0, null, $brandId);
-                    $account->save();
-                }
-                if(!strcmp($balanceInput,"cash") && $request["cashWithdrawalReason"] != null)
-                    $description = " (" . $request["cashWithdrawalReason"]  . ") " . $description;
+                $brand = Brand::where('id','=',$brandId)->first();
+                $name = $brand->name . ":" . $balanceInput;
+                $account = new Account();
+                $account->init($name, $balanceInput, 0, null, $brandId);
+                $account->save();
             }
-            elseif(!strcmp($balanceInput,"bankToBank"))
-            {
-                $fromAccount = Account::where('id', $request['fromBank'])->lockForUpdate()->first();
-                $toAccount = Account::where('id', $request['toBank'])->lockForUpdate()->first();
-            }
-            elseif(!strcmp($balanceInput,"banks"))
-            {
-                $account = Account::where('id','=',$request['bankAccountId'])->lockForUpdate()->first();
-                $description = " (تحويل بنك - " .  Bank::where('id', $account->bankID)->first()->name . ") " . $description;
-            }
-            elseif(!strcmp($balanceInput,"pos"))
-            {
-                $account = Account::where('id','=',$request['posAccountId'])->lockForUpdate()->first();
-            }
-            else
-                $account = Account::where('id','=',$balanceInput)->lockForUpdate()->first();
+            if(!strcmp($balanceInput,"cash") && $request["cashWithdrawalReason"] != null)
+                $description = " (" . $request["cashWithdrawalReason"]  . ") " . $description;
+        }
+        elseif(!strcmp($balanceInput,"bankToBank"))
+        {
+            $fromAccount = Account::where('id', $request['fromBank'])->first();
+            $toAccount = Account::where('id', $request['toBank'])->first();
+        }
+        elseif(!strcmp($balanceInput,"banks"))
+        {
+            $account = Account::where('id','=',$request['bankAccountId'])->first();
+            $description = " (تحويل بنك - " .  Bank::where('id', $account->bankID)->first()->name . ") " . $description;
+        }
+        elseif(!strcmp($balanceInput,"pos"))
+        {
+            $account = Account::where('id','=',$request['posAccountId'])->first();
+        }
+        else
+            $account = Account::where('id','=',$balanceInput)->first();
 
-            //now i have the account or created it. Just create the transaction and increment the account.
-            $transaction=null;
-            $fromTransaction=null;
-            $toTransaction=null;
-            if(!strcmp($balanceInput,"bankToBank"))
-            {
-                $fromTransaction = new Transaction();
-                $toTransaction = new Transaction();
-            }
-            else //Bank transaction or POS transaction
-                $transaction = new Transaction();
+        //now i have the account or created it. Just create the transaction and increment the account.
+        $transaction=null;
+        $fromTransaction=null;
+        $toTransaction=null;
+        if(!strcmp($balanceInput,"bankToBank"))
+        {
+            $fromTransaction = new Transaction();
+            $toTransaction = new Transaction();
+        }
+        else //Bank transaction or POS transaction
+            $transaction = new Transaction();
 
-        
+        DB::transaction(function () use($balanceInput, $transaction, $account, $request,$brandId,$fromTransaction,$toTransaction,$fromAccount,$toAccount,$description){
             if(!strcmp($balanceInput,"bankToBank"))
             {
                 if(($fromTransaction===null || $toTransaction===null || $fromAccount===null ||$toAccount===null))
@@ -105,6 +104,7 @@ class TransactionController extends Controller
             $transSaved=0;
             $fromTransSaved=0;
             $toTransSaved=0;
+
             if(!strcmp($balanceInput,"bankToBank"))
             {
                 $fromTransSaved = $fromTransaction->save();
@@ -210,7 +210,7 @@ class TransactionController extends Controller
                 $brandsIds = Brand::where('id',Auth::user()->brandId)->get('id');
 
             $accountsIds = Account::whereIn('brandID', $brandsIds)->where('type', $accountType)->get('id');
-            $transactions = Transaction::whereIn('accountId', $accountsIds)->limit(1000)->orderBy('date','Desc')->orderBy('id', 'Desc')->get();
+            $transactions = Transaction::whereIn('accountId', $accountsIds)->limit(100)->orderBy('date','Desc')->orderBy('id', 'Desc')->get();
         }     
         return view('transactions.queryBrandAccountTransactions',['accountType'=>$accountType, 'transactions'=>$transactions, 'brands'=>$brands, "todayDate"=>$todayDate, "bankAccounts"=>$bankAccounts,'yesterday'=>$yesterday]);
     }
@@ -287,15 +287,14 @@ class TransactionController extends Controller
 
     public function getDeleteTransaction($transactionId)
     {
-        DB::transaction(function () use($transactionId){
-            $transaction = Transaction::where('id', $transactionId)->lockForUpdate()->first();
-            $account = Account::where('id',$transaction->accountId)->lockForUpdate()->first();
-            $newBalance = $account->balance;
-            if(!strcmp($transaction->type,"add"))
-                $newBalance = $account->balance - $transaction->value;
-            else
-                $newBalance = $account->balance + $transaction->value;
-        
+        $transaction = Transaction::where('id', $transactionId)->first();
+        $account = Account::where('id',$transaction->accountId)->first();
+        $newBalance = $account->balance;
+        if(!strcmp($transaction->type,"add"))
+            $newBalance = $account->balance - $transaction->value;
+        else
+            $newBalance = $account->balance + $transaction->value;
+        DB::transaction(function () use($transaction, $account, $newBalance){
             $deletionStatus = $transaction->deleteTransaction();
             if($deletionStatus)
             {
@@ -322,22 +321,21 @@ class TransactionController extends Controller
 
     public function getConfirmCheckSettling($transactionId)
     {
-        DB::transaction(function () use($transactionId) {
-            $transaction = Transaction::where('id', $transactionId)->first();
-            $transaction->confirmSettling = true;
-            
-            $bankTransaction = new Transaction();
-            
-            $toBankAccount = Account::where('id', $transaction->checKToBankId)->lockForUpdate()->first();
-
-            $toBankAccount->balance = $toBankAccount->balance + $transaction->value;
-            
-            $description = "Cashing check number" .": ". $transaction->checkNumber;
-
-            $checksAccount = Account::where('id', $transaction->accountId)->lockForUpdate()->first();
-            $checksAccount->balance = $checksAccount->balance - $transaction->value;
-
+        $transaction = Transaction::where('id', $transactionId)->first();
+        $transaction->confirmSettling = true;
         
+        $bankTransaction = new Transaction();
+        
+        $toBankAccount = Account::where('id', $transaction->checKToBankId)->first();
+
+        $toBankAccount->balance = $toBankAccount->balance + $transaction->value;
+        
+        $description = "Cashing check number" .": ". $transaction->checkNumber;
+
+        $checksAccount = Account::where('id', $transaction->accountId)->first();
+        $checksAccount->balance = $checksAccount->balance - $transaction->value;
+
+        DB::transaction(function () use($transaction, $toBankAccount, $bankTransaction, $description,$checksAccount) {
             $transaction->save();
             $toBankAccount->save();
             $bankTransaction->init($transaction->checKToBankId, Auth::user()->id, "add", $transaction->value, $transaction->date, null, null, null, null, null ,null,null,$description, $transaction->clientName, $transaction->brandId, 1);
@@ -404,81 +402,79 @@ class TransactionController extends Controller
     {
         if($request['settled'] === null)
             return redirect()->back();
-        DB::transaction(function () use($request) {
-            $totalValue = 0;
-            $transaction = null;
-            foreach($request['settled'] as $transId)
-            {
-                $transaction = Transaction::where('id',$transId)->first();
-                $transaction->settled = true;
-                $transactionSaved = $transaction->save();
-                if($transactionSaved)
-                {
-                    if(!strcmp($transaction->type,"add"))
-                        $totalValue += $transaction->value;
-                    else
-                        $totalValue -= $transaction->value;
-                }
-            }
 
-            if($totalValue != 0 && $transaction != null)
+        $totalValue = 0;
+        $transaction = null;
+        foreach($request['settled'] as $transId)
+        {
+            $transaction = Transaction::where('id',$transId)->first();
+            $transaction->settled = true;
+            $transactionSaved = $transaction->save();
+            if($transactionSaved)
             {
-                $settlingTransaction = new Transaction();
-                $today = Carbon::today('Egypt')->toDateString();
-                $account = Account::where('id', $transaction->accountId)->lockForUpdate()->first();
-                $account->balance -= $totalValue;
-                $description = "A settling transaction";
-                $clientName = Auth::user()->name;
-                
+                if(!strcmp($transaction->type,"add"))
+                    $totalValue += $transaction->value;
+                else
+                    $totalValue -= $transaction->value;
+            }
+        }
+
+        if($totalValue != 0 && $transaction != null)
+        {
+            $settlingTransaction = new Transaction();
+            $today = Carbon::today('Egypt')->toDateString();
+            $account = Account::where('id', $transaction->accountId)->first();
+            $account->balance -= $totalValue;
+            $description = "A settling transaction";
+            $clientName = Auth::user()->name;
+            DB::transaction(function () use($settlingTransaction, $transaction, $totalValue, $today, $account, $description, $clientName) {
                 $settlingTransaction->init($account->id, Auth::user()->id, "sub", $totalValue, $today, null, null, null, true, null ,null,null,$description, $clientName, $transaction->brandId, 1);
                 $settlingTransaction->save();
                 $account->save();
-                
-            }
-        }, 5);
+            }, 5);
+        }
         return redirect()->back();
     }
 
     public function postConfirmSettlingPos(Request $request, $transactionId)
     {
-        DB::transaction(function () use($request, $transactionId) {
-            $transaction = Transaction::where('id', $transactionId)->first();
+        $transaction = Transaction::where('id', $transactionId)->first();
 
-            $brandId = $transaction->brandId;
-            $balanceInput = "posCommission";
-            $commissionAccount = Account::where([['type','=',$balanceInput]])->lockForUpdate()->first();
-            if($commissionAccount === null)
-            {
-                // $brand = Brand::where('id','=',$brandId)->first();
-                // $name = $brand->name . ":" . $balanceInput;
-                $name = "POS Commission";
-                $commissionAccount = new Account();
-                // $commissionAccount->init($name, $balanceInput, 0, null, $brandId);
-                $commissionAccount->init($name, $balanceInput, 0, null, null);
-                $commissionAccount->save();
-            }
+        $brandId = $transaction->brandId;
+        $balanceInput = "posCommission";
+        $commissionAccount = Account::where([['type','=',$balanceInput]])->first();
+        if($commissionAccount === null)
+        {
+            // $brand = Brand::where('id','=',$brandId)->first();
+            // $name = $brand->name . ":" . $balanceInput;
+            $name = "POS Commission";
+            $commissionAccount = new Account();
+            // $commissionAccount->init($name, $balanceInput, 0, null, $brandId);
+            $commissionAccount->init($name, $balanceInput, 0, null, null);
+            $commissionAccount->save();
+        }
 
-            $posAccount = Account::where('id', $transaction->accountId)->lockForUpdate()->first();
+        $posAccount = Account::where('id', $transaction->accountId)->first();
 
-            $bankValue = $request["valueInput"];
-            // $bankId = $request["bankIdInput"];
-            $bankAccount = Account::where('id', Account::where('id', $transaction->accountId)->first()->bankAccountId)->lockForUpdate()->first();
-            $commissionValue = $transaction->value - $bankValue;
-
-
-            $description = "Settling POS " .  $posAccount->name;
-
-            $bankTransaction = new Transaction();
-            $commissionTransaction = new Transaction();
-            $transaction->confirmSettling = true;
-            $bankAccount->balance += $bankValue;
-            $commissionAccount->balance += $commissionValue;
-
-            $today = Carbon::today('Egypt')->toDateString();
+        $bankValue = $request["valueInput"];
+        // $bankId = $request["bankIdInput"];
+        $bankAccount = Account::where('id', Account::where('id', $transaction->accountId)->first()->bankAccountId)->first();
+        $commissionValue = $transaction->value - $bankValue;
 
 
+        $description = "Settling POS " .  $posAccount->name;
 
-        
+        $bankTransaction = new Transaction();
+        $commissionTransaction = new Transaction();
+        $transaction->confirmSettling = true;
+        $bankAccount->balance += $bankValue;
+        $commissionAccount->balance += $commissionValue;
+
+        $today = Carbon::today('Egypt')->toDateString();
+
+
+
+        DB::transaction(function () use($transaction,$bankTransaction, $commissionTransaction, $bankAccount,$commissionAccount, $bankValue, $commissionValue, $today, $description,$brandId) {
             $bankTransaction->init($bankAccount->id, Auth::user()->id, "add", $bankValue, $today, null, null, null, null, null ,null,null,$description, Auth::user()->name, $brandId, 1);
             $commissionTransaction->init($commissionAccount->id, Auth::user()->id, "add", $commissionValue, $today, null, null, null, null, null ,null,null,$description, Auth::user()->name, $brandId, 1);
             $bankTransaction->save();

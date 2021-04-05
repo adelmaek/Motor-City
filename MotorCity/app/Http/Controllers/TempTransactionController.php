@@ -44,21 +44,20 @@ class TempTransactionController extends Controller
 
     public function postConfirmTempTransaction($transactionId, Request $request)
     {
-        DB::transaction(function () use($transactionId, $request){
-            // Log::debug($request);
-            $tempTransaction = TempTransaction::where('id', $transactionId)->first();
-            $tempTransaction->confirmed = 1;
+        Log::debug($request);
+        $tempTransaction = TempTransaction::where('id', $transactionId)->first();
+        $tempTransaction->confirmed = 1;
 
-            $bankTransaction = new Transaction();
-            $bankTransaction->init($tempTransaction->accountId, Auth::user()->id, "add", $tempTransaction->value, $tempTransaction->date, null, null, null, null, null ,null,null,$request['descriptionInput'], $request['clientInput'], $request['brandInput'], 0);
+        $bankTransaction = new Transaction();
+        $bankTransaction->init($tempTransaction->accountId, Auth::user()->id, "add", $tempTransaction->value, $tempTransaction->date, null, null, null, null, null ,null,null,$request['descriptionInput'], $request['clientInput'], $request['brandInput'], 0);
 
-            $bankAccount = Account::where('id', $tempTransaction->accountId)->lockForUpdate()->first();
-            $bankAccount->balance = $bankAccount->balance + $bankTransaction->value;
+        $bankAccount = Account::where('id', $tempTransaction->accountId)->first();
+        $bankAccount->balance = $bankAccount->balance + $bankTransaction->value;
 
-            
-                $tempTransaction->save();
-                $bankTransaction->save();
-                $bankAccount->save();
+        DB::transaction(function () use($tempTransaction, $bankTransaction, $bankAccount){
+            $tempTransaction->save();
+            $bankTransaction->save();
+            $bankAccount->save();
         }, 5);
 
         return redirect()->back();
