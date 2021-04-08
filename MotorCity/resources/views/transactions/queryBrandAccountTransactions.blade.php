@@ -218,8 +218,12 @@
 <script>
     $(document).on("click", "#modalButton", function () {
         var itemid = $(this).attr('data-item');
-       var path = $("#modalForm").attr('action')+ "/settleCheck/" +itemid;
+        var path = "/";
+        $("#modalForm").attr('action', path );
+        var path = $("#modalForm").attr('action')+ "settleCheck/" +itemid;
+        
        $("#modalForm").attr('action', path );
+       console.log($("#modalForm").attr('action'))
     });
 </script>
 @endsection

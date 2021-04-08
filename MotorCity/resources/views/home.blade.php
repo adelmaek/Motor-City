@@ -440,12 +440,16 @@
 <script>
     function editDescription(transId){
         $('#editModal').modal('toggle');
-        var path = $("#modalForm").attr('action')+ "/editDescription/" +transId;
+        var path = "/";
+        $("#modalForm").attr('action', path );
+        path = $("#modalForm").attr('action')+ "editDescription/" +transId;
         $("#modalForm").attr('action', path );
     };
     function editClientName(transId){
         $('#editModal').modal('toggle');
-        var path = $("#modalForm").attr('action')+ "/editClientName/" +transId;
+        var path = "/";
+        $("#modalForm").attr('action', path );
+        path = $("#modalForm").attr('action')+ "editClientName/" +transId;
         $("#modalForm").attr('action', path );
     };
 </script>

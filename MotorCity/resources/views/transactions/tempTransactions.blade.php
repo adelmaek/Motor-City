@@ -172,7 +172,9 @@
 <script>
     function confirmSettling(transId){
         $('#editModal').modal('toggle');
-        var path = $("#modalForm").attr('action')+ "/confirmTempTransaction/" +transId;
+        var path = "/";
+        $("#modalForm").attr('action', path );
+        path = $("#modalForm").attr('action')+ "confirmTempTransaction/" +transId;
         $("#modalForm").attr('action', path );
     };
 </script>
