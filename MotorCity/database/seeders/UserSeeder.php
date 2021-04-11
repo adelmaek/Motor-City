@@ -42,6 +42,14 @@ class UserSeeder extends Seeder
             'admin' => true,
             'brandId'=> -1
         ]);
+        DB::table('users')->insert([
+            'name' => "Adel",
+            'email' => 'Adel',
+            'password' => Hash::make('adel@motorcity'),
+            'admin' => true,
+            'brandId'=> -1,
+            'access'=>'tempBank'
+        ]);
     }
     
 }
