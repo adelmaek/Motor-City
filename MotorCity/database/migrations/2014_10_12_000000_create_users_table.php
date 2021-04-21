@@ -21,7 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->boolean('admin')->default(false);
             $table->bigInteger('brandId')->default(0);
-            $table->string('access')->default('all'); //this is added to add a type of users that will access a page with all temp bank transactions only.
+            // $table->string('access')->default('all'); //this is added to add a type of users that will access a page with all temp bank transactions only.
             $table->rememberToken();
             $table->timestamps();
         });
