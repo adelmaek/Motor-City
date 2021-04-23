@@ -21,31 +21,31 @@ class UserSeeder extends Seeder
         //     'admin' => true,
         //     'brandId'=> -1
         // ]);
+        // DB::table('users')->insert([
+        //     'name' => "Admin",
+        //     'email' => 'admin',
+        //     'password' => Hash::make('baba@motorcity'),
+        //     'admin' => true,
+        //     'brandId'=> -1
+        // ]);
+        // DB::table('users')->insert([
+        //     'name' => "Ahmed Ibrahem",
+        //     'email' => 'Ahmed Ibrahem',
+        //     'password' => Hash::make('1984'),
+        //     'admin' => true,
+        //     'brandId'=> -1
+        // ]);
+        // DB::table('users')->insert([
+        //     'name' => "Aly",
+        //     'email' => 'Aly',
+        //     'password' => Hash::make('aly@motorcity'),
+        //     'admin' => true,
+        //     'brandId'=> -1
+        // ]);
         DB::table('users')->insert([
-            'name' => "Admin",
-            'email' => 'admin',
-            'password' => Hash::make('baba@motorcity'),
-            'admin' => true,
-            'brandId'=> -1
-        ]);
-        DB::table('users')->insert([
-            'name' => "Ahmed Ibrahem",
-            'email' => 'Ahmed Ibrahem',
-            'password' => Hash::make('1984'),
-            'admin' => true,
-            'brandId'=> -1
-        ]);
-        DB::table('users')->insert([
-            'name' => "Aly",
-            'email' => 'Aly',
-            'password' => Hash::make('aly@motorcity'),
-            'admin' => true,
-            'brandId'=> -1
-        ]);
-        DB::table('users')->insert([
-            'name' => "Adel",
-            'email' => 'Adel',
-            'password' => Hash::make('adel@motorcity'),
+            'name' => "Read Only",
+            'email' => 'Manager',
+            'password' => Hash::make('manager@motorcity'),
             'admin' => true,
             'brandId'=> -1,
             'access'=>'tempBank'
