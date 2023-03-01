@@ -232,7 +232,9 @@
                                 <th scope="col" style="text-align:center">Value</th>
                                 <th scope="col" style="text-align:center">Description</th>
                                 <th scope="col" style="text-align:center">Client</th>
+                                @if(Auth::user()->id == 1)
                                 <th scope="col" style="text-align:center">Delete</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -249,10 +251,12 @@
                                 <td style="text-align:center;" class='{{($trans->value<0) ? 'table-danger' : '' }}'>{{number_format($trans->value)}}</td>
                                 <td style="text-align:center" onclick="editDescription({{$trans->id}});">{{$trans->description}}</td>
                                 <td style="text-align:center" onclick="editClientName({{$trans->id}});">{{$trans->clientName}}</td>
+                                @if(Auth::user()->id == 1)
                                 <td style="text-align:center">
                                     <a class="btn btn-danger delete-confirm" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('deleteTransaction',[$trans->id])}}"
                                         role="button">Delete</a>
                                 </td>
+                                @endif
                             </tr>
                             @endforeach
                         </tbody>
