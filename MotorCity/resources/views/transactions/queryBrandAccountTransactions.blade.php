@@ -122,7 +122,13 @@
                                                 @if(\Carbon\Carbon::parse($trans->checkSettlingDate)->gt(\Carbon\Carbon::parse($todayDate)) )
                                                     <a class="btn btn-info disabled"  style="height:25px;padding: 3px 8px;padding-bottom: 3px;" role="button">Confirm Settling</a>
                                                 @else
-                                                    <a class="btn btn-warning active text-white delete-confirm" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('confirmSettling',[$trans->id])}}" role="button" >Confirm Settling</a>
+                                                    @php
+                                                        $settlingAccount = App\Models\Account::where('id', $trans->checKToBankId)->first();
+                                                        $settlingBankName = $settlingAccount
+                                                            ? App\Models\Bank::where('id', $settlingAccount->bankID)->first()->name . ' ' . $settlingAccount->name
+                                                            : '';
+                                                    @endphp
+                                                    <a class="btn btn-warning active text-white confirm-settling" data-bank-name="{{ $settlingBankName }}" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('confirmSettling',[$trans->id])}}" role="button" >Confirm Settling</a>
                                                 @endif
                                             @else
                                                 Settled to {{App\Models\Bank::where('id',App\Models\Account::where('id',$trans->checKToBankId)->first()->bankID)->first()->name}} {{App\Models\Account::where('id',$trans->checKToBankId)->first()->name}}
@@ -224,6 +230,21 @@
         
        $("#modalForm").attr('action', path );
        console.log($("#modalForm").attr('action'))
+    });
+    $(document).on("click", ".confirm-settling", function (event) {
+        event.preventDefault();
+        const url = $(this).attr('href');
+        const bankName = $(this).data('bank-name');
+        swal({
+            title: 'Are you sure?',
+            text: 'This check will be settled to ' + bankName,
+            icon: 'warning',
+            buttons: ["Cancel", "Yes!"],
+        }).then(function(value) {
+            if (value) {
+                window.location.href = url;
+            }
+        });
     });
 </script>
 @endsection
