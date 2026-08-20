@@ -119,16 +119,18 @@
                                         @endif
                                         @if($trans->settled)
                                             @if(!$trans->confirmSettling)
+                                                @php
+                                                    $settlingAccount = App\Models\Account::where('id', $trans->checKToBankId)->first();
+                                                    $settlingBankName = $settlingAccount
+                                                        ? App\Models\Bank::where('id', $settlingAccount->bankID)->first()->name . ' ' . $settlingAccount->name
+                                                        : '';
+                                                @endphp
                                                 @if(\Carbon\Carbon::parse($trans->checkSettlingDate)->gt(\Carbon\Carbon::parse($todayDate)) )
-                                                    <a class="btn btn-info disabled"  style="height:25px;padding: 3px 8px;padding-bottom: 3px;" role="button">Confirm Settling</a>
+                                                    <span title="Settling to {{ $settlingBankName }}">
+                                                        <a class="btn btn-info disabled" style="height:25px;padding: 3px 8px;padding-bottom: 3px;pointer-events: none;" role="button">Confirm Settling</a>
+                                                    </span>
                                                 @else
-                                                    @php
-                                                        $settlingAccount = App\Models\Account::where('id', $trans->checKToBankId)->first();
-                                                        $settlingBankName = $settlingAccount
-                                                            ? App\Models\Bank::where('id', $settlingAccount->bankID)->first()->name . ' ' . $settlingAccount->name
-                                                            : '';
-                                                    @endphp
-                                                    <a class="btn btn-warning active text-white confirm-settling" data-bank-name="{{ $settlingBankName }}" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('confirmSettling',[$trans->id])}}" role="button" >Confirm Settling</a>
+                                                    <a class="btn btn-warning active text-white confirm-settling" data-bank-name="{{ $settlingBankName }}" title="Settling to {{ $settlingBankName }}" style="height:25px;padding: 3px 8px;padding-bottom: 3px;" href="{{route('confirmSettling',[$trans->id])}}" role="button" >Confirm Settling</a>
                                                 @endif
                                             @else
                                                 Settled to {{App\Models\Bank::where('id',App\Models\Account::where('id',$trans->checKToBankId)->first()->bankID)->first()->name}} {{App\Models\Account::where('id',$trans->checKToBankId)->first()->name}}
